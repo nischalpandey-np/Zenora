@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preload" href="/static/hero-bg.jpg" as="image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <title>Your Profile - Gourmet Bistro</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo">
+        <span class="logo-icon">GB</span>
+        Gourmet Bistro
+      </div>
+      <nav class="nav-primary">
+        <ul class="nav-menu">
+          <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+          {% if session.user_id %}
+            {% if user and user.is_admin %}
+              <li><a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link">Admin</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('user_profile') }}" class="nav-link active">Profile</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}" class="nav-link">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}" class="nav-link">Register</a></li>
+          {% endif %}
+        </ul>
+        <button class="mobile-menu-toggle">☰</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <div class="avatar-circle">{{ user.first_name[0] }}{{ user.last_name[0] }}</div>
+          <div class="profile-status"></div>
+        </div>
+        <h1 class="profile-title">{{ user.first_name }} {{ user.last_name }}</h1>
+        <p class="profile-subtitle">Member since {{ user.created_at.strftime('%B %Y') }}</p>
+      </div>
+
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <h2 class="section-title">Personal Information</h2>
+        </div>
+        
+        <div class="profile-info-grid">
+          <div class="profile-info-item">
+            <span class="profile-info-label">Username</span>
+            <span class="profile-info-value">{{ user.username }}</span>
+          </div>
+          <div class="profile-info-item">
+            <span class="profile-info-label">Email</span>
+            <span class="profile-info-value">{{ user.email }}</span>
+          </div>
+          <div class="profile-info-item">
+            <span class="profile-info-label">Member Since</span>
+            <span class="profile-info-value">{{ user.created_at.strftime('%B %d, %Y') }}</span>
+          </div>
+          <div class="profile-info-item">
+            <span class="profile-info-label">Account Status</span>
+            <span class="profile-info-value status-active">Active</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <h2 class="section-title">Your Order History</h2>
+          <p class="profile-card-subtitle">All your delicious adventures with us</p>
+        </div>
+        
+        {% if orders %}
+        <div class="table-responsive">
+          <table class="order-history-table">
+            <thead>
+              <tr>
+                <th>Order Code</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td>
+                  <span class="order-code-badge">{{ order.order_code }}</span>
+                </td>
+                <td>{{ order.order_date.strftime('%b %d, %Y') }}</td>
+                <td class="text-bold">{{ order.total_price|format_currency }}</td>
+                <td>
+                  <span class="status-badge status-{{ order.status }}">
+                    {{ order.status|title }}
+                    {% if order.status == 'declined' and order.decline_reason %}
+                      <span class="status-tooltip">Reason: {{ order.decline_reason }}</span>
+                    {% endif %}
+                  </span>
+                </td>
+                <td>
+                  <a href="{{ url_for('user_order_detail', order_id=order.order_id) }}" class="btn btn-sm btn-outline">Details</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <div class="empty-state-icon">🍽️</div>
+          <h3 class="empty-state-title">No Orders Yet</h3>
+          <p class="empty-state-text">Your culinary journey hasn't started yet. Let's fix that!</p>
+          <a href="{{ url_for('index') }}" class="btn btn-primary">Browse Menu</a>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="copyright">© 2025 Gourmet Bistro. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Mobile Menu -->
+  <div class="overlay"></div>
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <button class="mobile-menu-toggle">✕</button>
+    </div>
+    <ul class="mobile-nav-menu">
+      <li><a href="{{ url_for('index') }}" class="mobile-nav-link">Home</a></li>
+      {% if session.user_id %}
+        {% if user and user.is_admin %}
+          <li><a href="{{ url_for('admin.admin_dashboard') }}" class="mobile-nav-link">Admin</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('user_profile') }}" class="mobile-nav-link">Profile</a></li>
+        <li><a href="{{ url_for('auth.logout') }}" class="mobile-nav-link">Logout</a></li>
+      {% else %}
+        <li><a href="{{ url_for('auth.login') }}" class="mobile-nav-link">Login</a></li>
+        <li><a href="{{ url_for('auth.register') }}" class="mobile-nav-link">Register</a></li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <script src="/static/scripts.js"></script>
+</body>
+</html>

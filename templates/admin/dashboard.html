@@ -1,0 +1,377 @@
+<!-- Enhanced Admin Dashboard -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard - Gourmet Bistro</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <style>
+    /* Dashboard Metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .metric-card {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease;
+    }
+    
+    .metric-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+    
+    .metric-value {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin: 0.5rem 0;
+      color: #4f46e5;
+    }
+    
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    
+    .status-filter {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .status-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      background: #f3f4f6;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .status-btn.active {
+      background: #4f46e5;
+      color: white;
+    }
+    
+    /* Order Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+      margin: 1.5rem 0;
+      border-left: 2px solid #e5e7eb;
+    }
+    
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .timeline-dot {
+      position: absolute;
+      left: -1.375rem;
+      top: 0.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 50%;
+      background: #e5e7eb;
+      border: 3px solid white;
+    }
+    
+    .timeline-item.active .timeline-dot {
+      background: #4f46e5;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .btn-sm {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.875rem;
+    }
+    
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 2rem;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* Status badge styles (no @apply) */
+    .status-badge {
+      padding: 0.25rem 0.5rem; /* px-2 py-1 */
+      border-radius: 9999px;    /* rounded-full */
+      font-size: 0.75rem;       /* text-xs */
+      font-weight: 700;         /* font-bold */
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .status-pending { background-color: #fef3c7; color: #92400e; } /* yellow-100 & yellow-800 */
+    .status-approved { background-color: #dbeafe; color: #1e40af; } /* blue-100 & blue-800 */
+    .status-processing { background-color: #ede9fe; color: #6b21a8; } /* purple-100 & purple-800 */
+    .status-completed { background-color: #d1fae5; color: #065f46; } /* green-100 & green-800 */
+    .status-cancelled { background-color: #fee2e2; color: #991b1b; } /* red-100 & red-800 */
+    .status-declined { background-color: #f3f4f6; color: #374151; } /* gray-100 & gray-800 */
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">GB</div>
+        <span>Gourmet Bistro</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link active">Admin Dashboard</a>
+        <a href="{{ url_for('user_profile') }}" class="nav-link">Profile</a>
+        <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title">Admin Dashboard</h1>
+      
+      <!-- Metrics Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="text-gray-500">Total Users</div>
+          <div class="metric-value">{{ metrics.total_users }}</div>
+          <div class="text-sm text-green-600">+{{ metrics.new_users }} new</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="text-gray-500">Total Orders</div>
+          <div class="metric-value">{{ metrics.total_orders }}</div>
+          <div class="text-sm text-gray-500">{{ metrics.avg_order_value|format_currency }} avg</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="text-gray-500">Revenue</div>
+          <div class="metric-value">{{ metrics.total_revenue|format_currency }}</div>
+          <div class="text-sm text-green-600">+{{ metrics.revenue_growth }}%</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="text-gray-500">Pending Orders</div>
+          <div class="metric-value">{{ metrics.pending_orders }}</div>
+          <div class="text-sm text-red-600">{{ metrics.declined_orders }} declined</div>
+        </div>
+      </div>
+      
+      <!-- Order Management -->
+      <div class="card">
+        <div class="card-header flex justify-between items-center">
+          <h2 class="text-xl font-bold">Order Management</h2>
+          <div class="filter-bar">
+            <div class="status-filter">
+              <button class="status-btn active" data-status="all">All</button>
+              <button class="status-btn" data-status="pending">Pending</button>
+              <button class="status-btn" data-status="processing">Processing</button>
+              <button class="status-btn" data-status="completed">Completed</button>
+              <button class="status-btn" data-status="cancelled">Cancelled</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="admin-table w-full">
+              <thead>
+                <tr>
+                  <th>Order Code</th>
+                  <th>Customer</th>
+                  <th>Date</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Store</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in orders %}
+                <tr data-status="{{ order.status }}">
+                  <td>{{ order.order_code }}</td>
+                  <td>{{ order.customer_name }}</td>
+                  <td>{{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                  <td>{{ order.total_price|format_currency }}</td>
+                  <td>
+                    <span class="status-badge status-{{ order.status }}">
+                      {{ order.status|title }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="store-type-badge">
+                      {{ order.store_type|title }}
+                    </span>
+                  </td>
+                  <td class="action-buttons">
+                    <a href="{{ url_for('admin.admin_order_detail', order_id=order.order_id) }}" 
+                       class="btn btn-sm btn-outline">
+                      View
+                    </a>
+                    {% if order.status == 'pending' %}
+                    <button class="btn btn-sm btn-primary btn-approve" 
+                            data-order-id="{{ order.order_id }}">
+                      Approve
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-decline" 
+                            data-order-id="{{ order.order_id }}">
+                      Decline
+                    </button>
+                    {% elif order.status == 'approved' %}
+                    <button class="btn btn-sm btn-secondary btn-process" 
+                            data-order-id="{{ order.order_id }}">
+                      Process
+                    </button>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td colspan="7" class="text-center py-4 text-gray-500">No orders found</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Modals -->
+  <div id="approveModal" class="modal">
+    <div class="modal-content">
+      <h3 class="text-xl font-bold mb-4">Approve Order</h3>
+      <form id="approveForm" action="{{ url_for('admin.admin_update_order') }}" method="POST">
+        <input type="hidden" name="order_id" id="approveOrderId" />
+        <input type="hidden" name="status" value="approved" />
+        <div class="form-group">
+          <label class="form-label">Admin Notes</label>
+          <textarea name="admin_notes" class="form-control" placeholder="Add notes about this approval"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 mt-4">
+          <button type="button" class="btn btn-outline btn-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm Approval</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <div id="declineModal" class="modal">
+    <div class="modal-content">
+      <h3 class="text-xl font-bold mb-4">Decline Order</h3>
+      <form id="declineForm" action="{{ url_for('admin.admin_update_order') }}" method="POST">
+        <input type="hidden" name="order_id" id="declineOrderId" />
+        <input type="hidden" name="status" value="declined" />
+        <div class="form-group">
+          <label class="form-label">Reason for Decline</label>
+          <textarea name="decline_reason" class="form-control" required placeholder="Explain why this order is being declined"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 mt-4">
+          <button type="button" class="btn btn-outline btn-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-danger">Confirm Decline</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Filter orders by status
+    document.querySelectorAll('.status-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const status = btn.dataset.status;
+        
+        // Update active button
+        document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Show/hide orders
+        document.querySelectorAll('tbody tr').forEach(row => {
+          if (status === 'all' || row.dataset.status === status) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+    });
+    
+    // Modal handling
+    const modals = {
+      approve: document.getElementById('approveModal'),
+      decline: document.getElementById('declineModal')
+    };
+    
+    document.querySelectorAll('.btn-approve').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const orderId = btn.dataset.orderId;
+        document.getElementById('approveOrderId').value = orderId;
+        modals.approve.style.display = 'flex';
+      });
+    });
+    
+    document.querySelectorAll('.btn-decline').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const orderId = btn.dataset.orderId;
+        document.getElementById('declineOrderId').value = orderId;
+        modals.decline.style.display = 'flex';
+      });
+    });
+    
+    document.querySelectorAll('.btn-modal-cancel').forEach(btn => {
+      btn.addEventListener('click', () => {
+        Object.values(modals).forEach(modal => {
+          modal.style.display = 'none';
+        });
+      });
+    });
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

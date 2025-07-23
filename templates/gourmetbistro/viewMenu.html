@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digi-Bistro - Menu</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo">
+        <span class="logo-icon">DB</span>
+        Digi-Bistro
+      </div>
+      <nav class="nav-primary">
+        <ul class="nav-menu">
+          <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+          <li><a href="{{ url_for('view_menu') }}" class="nav-link active">Menu</a></li>
+          {% if session.user_id %}
+            {% if user and user.is_admin %}
+              <li><a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link">Admin</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('user_profile') }}" class="nav-link">Profile</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}" class="nav-link">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}" class="nav-link">Register</a></li>
+          {% endif %}
+        </ul>
+        <button class="mobile-menu-toggle">☰</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section">
+      <div class="menu-header">
+        <h1 class="section-title">Our Menu</h1>
+        <div class="menu-categories">
+          <button class="category-btn active">All Items</button>
+          <button class="category-btn">Starters</button>
+          <button class="category-btn">Main Courses</button>
+          <button class="category-btn">Desserts</button>
+          <button class="category-btn">Drinks</button>
+        </div>
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash-messages">
+            {% for message in messages %}
+              <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form id="menu-form" action="{{ url_for('view_menu') }}" method="post">
+        <div class="item-grid">
+          {% for item in [
+            {"name": "Pasta", "img": "pasta.jpg", "price": "120.00", "desc": "A delicious pasta dish with rich tomato sauce and fresh herbs.", "category": "main"},
+            {"name": "Momo", "img": "momo.jpg", "price": "150.00", "desc": "Steamed dumplings filled with flavorful meat or vegetables.", "category": "starter"},
+            {"name": "Burger", "img": "burger.jpg", "price": "220.00", "desc": "Juicy burger with your choice of toppings, served with fries.", "category": "main"},
+            {"name": "Coffee", "img": "coffee.jpg", "price": "200.00", "desc": "Freshly brewed coffee to start your day right.", "category": "drink"},
+            {"name": "Tea", "img": "tea.jpg", "price": "32.00", "desc": "A selection of soothing teas to relax and refresh.", "category": "drink"},
+            {"name": "Chowmein", "img": "chowmein.jpg", "price": "200.00", "desc": "Flavorful stir-fried noodles with vegetables and protein.", "category": "main"},
+            {"name": "Samosa", "img": "samosa.jpg", "price": "35.00", "desc": "Crispy pastry filled with spiced potatoes and peas.", "category": "starter"}
+          ] %}
+          <div class="item-card" data-category="{{ item.category }}">
+            <div class="item-image-container">
+              <img src="/static/{{ item.img }}" alt="{{ item.name }}" class="item-image">
+            </div>
+            <div class="item-content">
+              <h3 class="item-title">{{ item.name }}</h3>
+              <p class="item-description">{{ item.desc }}</p>
+              <div class="item-footer">
+  <span class="item-price">Nrs {{ item.price }}</span>
+  <div class="quantity-selector">
+    <input type="number" id="{{ item.name }}" name="{{ item.name }}" min="0" max="10" value="0" class="quantity-input">
+    <button type="button" class="add-to-cart" data-item="{{ item.name }}" data-price="{{ item.price }}">Add</button>
+  </div>
+</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="order-summary">
+  <div class="order-code">
+    YOUR ORDER
+  </div>
+  <div class="order-details">
+    <div class="cart-items" id="cart-items">
+      <!-- Cart items will be added here dynamically -->
+    </div>
+    <div class="order-row">
+      <span class="label">Items Selected:</span>
+      <span class="value" id="items-count">0</span>
+    </div>
+    <div class="order-row">
+      <span class="label">Subtotal:</span>
+      <span class="value" id="subtotal">Nrs 0.00</span>
+    </div>
+    <div class="order-row">
+      <span class="label">Delivery Fee:</span>
+      <span class="value">Nrs 50.00</span>
+    </div>
+    <div class="order-row">
+      <span class="label">Total:</span>
+      <span class="value order-total" id="total">Nrs 50.00</span>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary btn-block btn-lg">Place Order</button>
+</div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="copyright">
+        © 2025 Digi-Bistro. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Menu -->
+  <div class="overlay"></div>
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <button class="mobile-menu-toggle">✕</button>
+    </div>
+    <ul class="mobile-nav-menu">
+      <li><a href="{{ url_for('index') }}" class="mobile-nav-link">Home</a></li>
+      <li><a href="{{ url_for('view_menu') }}" class="mobile-nav-link active">Menu</a></li>
+      {% if session.user_id %}
+        {% if user and user.is_admin %}
+          <li><a href="{{ url_for('admin.admin_dashboard') }}" class="mobile-nav-link">Admin</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('user_profile') }}" class="mobile-nav-link">Profile</a></li>
+        <li><a href="{{ url_for('auth.logout') }}" class="mobile-nav-link">Logout</a></li>
+      {% else %}
+        <li><a href="{{ url_for('auth.login') }}" class="mobile-nav-link">Login</a></li>
+        <li><a href="{{ url_for('auth.register') }}" class="mobile-nav-link">Register</a></li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <script src="/static/scripts.js"></script>
+</body>
+</html>

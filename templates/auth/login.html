@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preload" href="/static/hero-bg.jpg" as="image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <title>Login{% if site_name %} - {{ site_name }}{% endif %}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo">
+        <span class="logo-icon">GB</span>
+        Gourmet Bistro
+      </div>
+      <nav class="nav-primary">
+        <ul class="nav-menu">
+          <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+          {% if session.user_id %}
+            {% if user and user.is_admin %}
+              <li><a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link">Admin</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('user_profile') }}" class="nav-link">Profile</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}" class="nav-link active">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}" class="nav-link">Register</a></li>
+          {% endif %}
+        </ul>
+        <button class="mobile-menu-toggle">☰</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section">
+      <div class="auth-card">
+        <div class="auth-card-header">
+          <h2 class="section-title">Welcome Back</h2>
+          <p class="auth-card-subtitle">Sign in to your account</p>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=True) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        
+        <form action="{{ url_for('auth.login') }}" method="post" class="auth-form">
+          <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" name="username" class="form-control" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+          </div>
+          
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+          </div>
+          
+          {% if not user %}
+          <div class="text-center">
+            <p class="auth-link-text">Need admin access? <a href="{{ url_for('auth.register_admin') }}" class="auth-link">Register as admin</a></p>
+          </div>
+          {% endif %}
+        </form>
+        
+        <div class="auth-card-footer">
+          <p class="auth-link-text">Don't have an account? <a href="{{ url_for('auth.register') }}" class="auth-link">Create one</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="copyright">© 2025 Gourmet Bistro. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Mobile Menu -->
+  <div class="overlay"></div>
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <button class="mobile-menu-toggle">✕</button>
+    </div>
+    <ul class="mobile-nav-menu">
+      <li><a href="{{ url_for('index') }}" class="mobile-nav-link">Home</a></li>
+      {% if session.user_id %}
+        {% if user and user.is_admin %}
+          <li><a href="{{ url_for('admin.admin_dashboard') }}" class="mobile-nav-link">Admin</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('user_profile') }}" class="mobile-nav-link">Profile</a></li>
+        <li><a href="{{ url_for('auth.logout') }}" class="mobile-nav-link">Logout</a></li>
+      {% else %}
+        <li><a href="{{ url_for('auth.login') }}" class="mobile-nav-link">Login</a></li>
+        <li><a href="{{ url_for('auth.register') }}" class="mobile-nav-link">Register</a></li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <script src="/static/scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fashion Hub - Clothing Store</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo">
+        <span class="logo-icon">FH</span>
+        Fashion Hub
+      </div>
+      <nav class="nav-primary">
+        <ul class="nav-menu">
+          <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+          <li><a href="{{ url_for('clothstore') }}" class="nav-link active">Store</a></li>
+          {% if session.user_id %}
+            {% if user and user.is_admin %}
+              <li><a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link">Admin</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('user_profile') }}" class="nav-link">Profile</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}" class="nav-link">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}" class="nav-link">Register</a></li>
+          {% endif %}
+        </ul>
+        <button class="mobile-menu-toggle">☰</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero fashion-hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Elevate Your Style</h1>
+      <p class="hero-subtitle">Discover the latest trends in fashion and express your unique personality</p>
+      <div class="hero-cta">
+        <a href="{{ url_for('view_clothing') }}" class="btn btn-primary btn-lg">Shop Collection</a>
+        <a href="#featured" class="btn btn-glass">View Featured</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="featured">
+    <div class="container">
+      <h2 class="section-title">Featured Collection</h2>
+      <p class="text-center text-gray-600 mb-8">Curated selection of our most popular items this season</p>
+      
+      <div class="item-grid">
+        <div class="item-card hover-grow">
+          <div class="item-image-container tshirt-bg">
+            <div class="item-badge">Bestseller</div>
+            <div class="item-emoji">👕</div>
+          </div>
+          <div class="item-content">
+            <h3 class="item-title">Premium T-Shirt</h3>
+            <p class="item-description">Soft cotton fabric with perfect fit. Available in 12 colors.</p>
+            <div class="item-footer">
+              <span class="item-price">Nrs 800.00</span>
+              <div class="item-rating">
+                ★★★★☆ <span class="text-xs">(128)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="item-card hover-grow">
+          <div class="item-image-container jeans-bg">
+            <div class="item-badge">New</div>
+            <div class="item-emoji">👖</div>
+          </div>
+          <div class="item-content">
+            <h3 class="item-title">Slim Fit Jeans</h3>
+            <p class="item-description">Premium denim with stretch technology for all-day comfort.</p>
+            <div class="item-footer">
+              <span class="item-price">Nrs 1500.00</span>
+              <div class="item-rating">
+                ★★★★★ <span class="text-xs">(94)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="item-card hover-grow">
+          <div class="item-image-container dress-bg">
+            <div class="item-emoji">👗</div>
+          </div>
+          <div class="item-content">
+            <h3 class="item-title">Summer Dress</h3>
+            <p class="item-description">Lightweight and breathable for warm weather elegance.</p>
+            <div class="item-footer">
+              <span class="item-price">Nrs 2000.00</span>
+              <div class="item-rating">
+                ★★★★☆ <span class="text-xs">(76)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="item-card hover-grow">
+          <div class="item-image-container jacket-bg">
+            <div class="item-badge">Limited</div>
+            <div class="item-emoji">🧥</div>
+          </div>
+          <div class="item-content">
+            <h3 class="item-title">Bomber Jacket</h3>
+            <p class="item-description">Stylish and functional with water-resistant finish.</p>
+            <div class="item-footer">
+              <span class="item-price">Nrs 2500.00</span>
+              <div class="item-rating">
+                ★★★★☆ <span class="text-xs">(52)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-12">
+        <a href="{{ url_for('view_clothing') }}" class="btn btn-primary btn-lg">View Full Collection</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-gray-100">
+    <div class="container">
+      <div class="flex flex-col md:flex-row items-center gap-8">
+        <div class="flex-1">
+          <h2 class="section-title">Why Choose Fashion Hub?</h2>
+          <ul class="feature-list">
+            <li class="feature-item">
+              <div class="feature-icon">✓</div>
+              <div>
+                <h3>Premium Quality</h3>
+                <p>We source only the finest materials for lasting comfort and style.</p>
+              </div>
+            </li>
+            <li class="feature-item">
+              <div class="feature-icon">✓</div>
+              <div>
+                <h3>Ethical Production</h3>
+                <p>All our items are made in fair-wage, sustainable factories.</p>
+              </div>
+            </li>
+            <li class="feature-item">
+              <div class="feature-icon">✓</div>
+              <div>
+                <h3>Easy Returns</h3>
+                <p>30-day hassle-free returns on all items.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="flex-1">
+          <div class="feature-image"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">Fashion Hub</div>
+          <p class="footer-description">Elevating your wardrobe one piece at a time since 2025.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📱</a>
+            <a href="#" class="social-link">📘</a>
+            <a href="#" class="social-link">📸</a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h5>Shop</h5>
+          <ul>
+            <li><a href="{{ url_for('view_clothing') }}">All Items</a></li>
+            <li><a href="#">New Arrivals</a></li>
+            <li><a href="#">Bestsellers</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h5>Help</h5>
+          <ul>
+            <li><a href="#">FAQs</a></li>
+            <li><a href="#">Shipping</a></li>
+            <li><a href="#">Returns</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        © 2025 Fashion Hub. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Menu -->
+  <div class="overlay"></div>
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <button class="mobile-menu-toggle">✕</button>
+    </div>
+    <ul class="mobile-nav-menu">
+      <li><a href="{{ url_for('index') }}" class="mobile-nav-link">Home</a></li>
+      <li><a href="{{ url_for('clothstore') }}" class="mobile-nav-link">Store</a></li>
+      {% if session.user_id %}
+        {% if user and user.is_admin %}
+          <li><a href="{{ url_for('admin.admin_dashboard') }}" class="mobile-nav-link">Admin</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('user_profile') }}" class="mobile-nav-link">Profile</a></li>
+        <li><a href="{{ url_for('auth.logout') }}" class="mobile-nav-link">Logout</a></li>
+      {% else %}
+        <li><a href="{{ url_for('auth.login') }}" class="mobile-nav-link">Login</a></li>
+        <li><a href="{{ url_for('auth.register') }}" class="mobile-nav-link">Register</a></li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <script src="/static/scripts.js"></script>
+</body>
+</html>

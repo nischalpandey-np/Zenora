@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digi-Bistro - Home</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo">
+        <span class="logo-icon">DB</span>
+        Digi-Bistro
+      </div>
+      <nav class="nav-primary">
+        <ul class="nav-menu">
+          <li><a href="{{ url_for('index') }}" class="nav-link active">Home</a></li>
+          <li><a href="{{ url_for('view_menu') }}" class="nav-link">Menu</a></li>
+          {% if session.user_id %}
+            {% if user and user.is_admin %}
+              <li><a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link">Admin</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('user_profile') }}" class="nav-link">Profile</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}" class="nav-link">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}" class="nav-link">Register</a></li>
+          {% endif %}
+        </ul>
+        <button class="mobile-menu-toggle">☰</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero food-hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Digital Dining Excellence</h1>
+      <p class="hero-subtitle">Experience gourmet flavors delivered to your doorstep</p>
+      <div class="hero-cta">
+        <a href="{{ url_for('view_menu') }}" class="btn btn-primary btn-lg">Order Now</a>
+        <a href="#specials" class="btn btn-glass">Today's Specials</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="specials">
+    <div class="container">
+      <h2 class="section-title">Today's Specials</h2>
+      <p class="text-center text-gray-600 mb-8">Chef's curated selection of the day</p>
+      
+      <div class="item-grid">
+        <div class="item-card hover-grow">
+          <div class="item-image-container">
+            <img src="/static/pasta.jpg" alt="Pasta" class="item-image">
+            <div class="item-badge">Chef's Pick</div>
+          </div>
+          <div class="item-content">
+            <h3 class="item-title">Truffle Pasta</h3>
+            <p class="item-description">Handmade pasta with wild mushrooms and black truffle cream sauce.</p>
+            <div class="item-footer">
+              <span class="item-price">Nrs 1200.00</span>
+              <div class="item-rating">
+                ★★★★★ <span class="text-xs">(42)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="item-card hover-grow">
+          <div class="item-image-container">
+            <img src="/static/momo.jpg" alt="Momo" class="item-image">
+            <div class="item-badge">Popular</div>
+          </div>
+          <div class="item-content">
+            <h3 class="item-title">Himalayan Momo</h3>
+            <p class="item-description">Steamed dumplings with authentic Nepalese spices and chutney.</p>
+            <div class="item-footer">
+              <span class="item-price">Nrs 450.00</span>
+              <div class="item-rating">
+                ★★★★☆ <span class="text-xs">(136)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="item-card hover-grow">
+          <div class="item-image-container">
+            <img src="/static/burger.jpg" alt="Burger" class="item-image">
+            <div class="item-badge">New</div>
+          </div>
+          <div class="item-content">
+            <h3 class="item-title">Gourmet Burger</h3>
+            <p class="item-description">Wagyu beef patty with aged cheddar and truffle aioli.</p>
+            <div class="item-footer">
+              <span class="item-price">Nrs 1800.00</span>
+              <div class="item-rating">
+                ★★★★☆ <span class="text-xs">(28)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section bg-gray-100">
+    <div class="container">
+      <div class="flex flex-col md:flex-row items-center gap-8">
+        <div class="flex-1">
+          <h2 class="section-title">Our Culinary Philosophy</h2>
+          <p class="mb-6">At Digi-Bistro, we believe in combining traditional recipes with modern techniques to create unforgettable dining experiences.</p>
+          <ul class="feature-list">
+            <li class="feature-item">
+              <div class="feature-icon">🍅</div>
+              <div>
+                <h3>Farm Fresh</h3>
+                <p>Locally sourced ingredients from trusted suppliers</p>
+              </div>
+            </li>
+            <li class="feature-item">
+              <div class="feature-icon">👨‍🍳</div>
+              <div>
+                <h3>Expert Chefs</h3>
+                <p>Internationally trained culinary team</p>
+              </div>
+            </li>
+            <li class="feature-item">
+              <div class="feature-icon">🚚</div>
+              <div>
+                <h3>Fast Delivery</h3>
+                <p>Hot and fresh to your door in under 30 minutes</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="flex-1">
+          <div class="chef-image"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">Digi-Bistro</div>
+          <p class="footer-description">Redefining digital dining since 2025.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📱</a>
+            <a href="#" class="social-link">📘</a>
+            <a href="#" class="social-link">📸</a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h5>Menu</h5>
+          <ul>
+            <li><a href="{{ url_for('view_menu') }}">Full Menu</a></li>
+            <li><a href="#">Specials</a></li>
+            <li><a href="#">Seasonal Items</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h5>Information</h5>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">FAQs</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        © 2025 Digi-Bistro. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile Menu -->
+  <div class="overlay"></div>
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <button class="mobile-menu-toggle">✕</button>
+    </div>
+    <ul class="mobile-nav-menu">
+      <li><a href="{{ url_for('index') }}" class="mobile-nav-link active">Home</a></li>
+      <li><a href="{{ url_for('view_menu') }}" class="mobile-nav-link">Menu</a></li>
+      {% if session.user_id %}
+        {% if user and user.is_admin %}
+          <li><a href="{{ url_for('admin.admin_dashboard') }}" class="mobile-nav-link">Admin</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('user_profile') }}" class="mobile-nav-link">Profile</a></li>
+        <li><a href="{{ url_for('auth.logout') }}" class="mobile-nav-link">Logout</a></li>
+      {% else %}
+        <li><a href="{{ url_for('auth.login') }}" class="mobile-nav-link">Login</a></li>
+        <li><a href="{{ url_for('auth.register') }}" class="mobile-nav-link">Register</a></li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <script src="/static/scripts.js"></script>
+</body>
+</html>

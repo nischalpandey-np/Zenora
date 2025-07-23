@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Welcome - Choose Your Experience | ZENORA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.0.6/tsparticles.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #ec4899;
+    --accent: #f97316;
+    --dark: #1e293b;
+  }
+  
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f9fafb, #f0f4f8);
+    color: var(--dark);
+    overflow-x: hidden;
+  }
+  
+  /* Hero Section with Particle Background */
+  .hero-bg {
+    position: relative;
+    background: linear-gradient(-45deg, #1a1a1a, #2a2a2a, #3a3a3a, #1a1a1a);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    overflow: hidden;
+  }
+  
+  #particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 10;
+  }
+  
+  /* Splash Cards */
+  .splash-card {
+    perspective: 1500px;
+  }
+  
+  .splash-inner {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: rotateY(0deg);
+  }
+  
+  .splash-card:hover .splash-inner {
+    transform: rotateY(15deg) rotateX(5deg) scale(1.03);
+  }
+  
+  .splash-image {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+    border-radius: 24px 24px 0 0;
+  }
+  
+  .splash-card:hover .splash-image {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+  
+  /* Gradient backgrounds */
+  .restaurant-splash {
+    background: radial-gradient(circle at top left, #ff5f6d, #ffc371);
+  }
+  
+  .clothing-splash {
+    background: linear-gradient(135deg, #9d50bb, #6e48aa);
+  }
+  
+  .quality-splash {
+    background: linear-gradient(135deg, #fceabb, #f8b500);
+  }
+  
+  .service-splash {
+    background: linear-gradient(135deg, #6dd5ed, #2193b0);
+  }
+  
+  .delivery-splash {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+  }
+  
+  .support-splash {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+  }
+  
+  /* Buttons */
+  .btn-gradient {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    transform: translateY(0);
+  }
+  
+  .btn-gradient::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0.6), rgba(255,255,255,0.3));
+    transform: skewX(-25deg);
+    transition: left 0.7s ease;
+    z-index: 10;
+  }
+  
+  .btn-gradient:hover::before {
+    left: 150%;
+  }
+  
+  .btn-gradient:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+  }
+  
+  /* Animations */
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .fade-up {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: fadeUp 0.7s forwards;
+  }
+  
+  .fade-up.delay-1 { animation-delay: 0.15s; }
+  .fade-up.delay-2 { animation-delay: 0.3s; }
+  .fade-up.delay-3 { animation-delay: 0.45s; }
+  .fade-up.delay-4 { animation-delay: 0.6s; }
+  
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Floating animation */
+  @keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+  }
+  
+  .floating {
+    animation: floating 6s ease-in-out infinite;
+  }
+  
+  .floating.delay-1 { animation-delay: 0.5s; }
+  .floating.delay-2 { animation-delay: 1s; }
+  
+  /* Scroll animations */
+  [data-aos] {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  
+  [data-aos="fade-up"] {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  
+  [data-aos="fade-up"].aos-animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  [data-aos="zoom-in"] {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  
+  [data-aos="zoom-in"].aos-animate {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  /* Testimonial cards */
+  .testimonial-card {
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  
+  .testimonial-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Newsletter form */
+  .newsletter-form input {
+    transition: all 0.3s ease;
+  }
+  
+  .newsletter-form input:focus {
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+  }
+  
+  /* Footer */
+  .footer-links a {
+    position: relative;
+  }
+  
+  .footer-links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: white;
+    transition: width 0.3s ease;
+  }
+  
+  .footer-links a:hover::after {
+    width: 100%;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .hero-buttons {
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .hero-buttons a {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-white shadow-lg sticky top-0 z-50 backdrop-blur-sm bg-opacity-90">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <div class="text-3xl font-extrabold text-indigo-600 tracking-wide hover:text-indigo-700 cursor-pointer transition transform hover:scale-105">
+          ~ZENORA
+        </div>
+        <div class="ml-2 bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full font-bold">
+          PREMIUM
+        </div>
+      </div>
+      <nav>
+        <ul class="flex space-x-8 text-lg font-semibold">
+          <li><a href="{{ url_for('index') }}" class="hover:text-indigo-600 transition relative group">
+            Home
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+          </a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition relative group">
+            About
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+          </a></li>
+          <li><a href="#" class="hover:text-indigo-600 transition relative group">
+            Contact
+            <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+          </a></li>
+          {% if session.user_id %}
+            {% if user and user.is_admin %}
+              <li><a href="{{ url_for('admin.admin_dashboard') }}" class="hover:text-indigo-600 transition">Admin</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('user_profile') }}" class="hover:text-indigo-600 transition">Profile</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="hover:text-indigo-600 transition">Logout</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}" class="hover:text-indigo-600 transition">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition">Register</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section with Particle Background -->
+  <section class="hero-bg bg-cover bg-center text-white py-32 flex items-center relative">
+    <div id="particles-js"></div>
+    <div class="container mx-auto px-6 text-center max-w-4xl hero-content">
+      <div class="fade-up">
+        <h1 class="text-5xl md:text-7xl font-extrabold mb-6 drop-shadow-lg">
+          Choose Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">Experience</span>
+        </h1>
+      </div>
+      <p class="text-xl md:text-2xl max-w-xl mx-auto drop-shadow-md fade-up delay-1">
+        Discover amazing food or stylish clothing — the choice is yours. 
+        Dive into elegance and excitement with ZENORA.
+      </p>
+      <div class="mt-12 flex justify-center gap-8 hero-buttons fade-up delay-2">
+        <a href="{{ url_for('digibistro') }}" class="btn-gradient bg-gradient-to-r from-red-500 to-red-600 rounded-full px-8 py-4 text-lg md:text-xl font-semibold shadow-lg text-white hover:from-red-600 hover:to-red-700 relative overflow-hidden flex items-center">
+          <i class="fas fa-utensils mr-3"></i> Explore Digi-Bistro
+        </a>
+        <a href="{{ url_for('clothstore') }}" class="btn-gradient bg-gradient-to-r from-purple-600 to-purple-700 rounded-full px-8 py-4 text-lg md:text-xl font-semibold shadow-lg text-white hover:from-purple-700 hover:to-purple-800 relative overflow-hidden flex items-center">
+          <i class="fas fa-tshirt mr-3"></i> Visit Fashion Hub
+        </a>
+      </div>
+      
+      <div class="mt-20 fade-up delay-3">
+        <div class="inline-block animate-bounce">
+          <i class="fas fa-chevron-down text-2xl text-white opacity-70"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Floating Elements -->
+  <div class="absolute top-40 right-10 w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 opacity-20 blur-xl floating"></div>
+  <div class="absolute top-1/4 left-10 w-24 h-24 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 opacity-20 blur-xl floating delay-1"></div>
+  <div class="absolute bottom-1/3 left-1/4 w-20 h-20 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500 opacity-20 blur-xl floating delay-2"></div>
+
+  <!-- Business Options -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto mb-20">
+        <h2 class="text-4xl font-extrabold text-gray-900 mb-6" data-aos="fade-up">
+          Experience <span class="text-indigo-600">Premium</span> Services
+        </h2>
+        <p class="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="100">
+          Discover our premium offerings designed to elevate your lifestyle
+        </p>
+      </div>
+      
+      <div class="flex flex-col lg:flex-row gap-12 justify-center max-w-7xl mx-auto">
+        <!-- Restaurant Card -->
+        <div class="splash-card flex-1 max-w-xl">
+          <a href="{{ url_for('digibistro') }}" class="group">
+            <div class="splash-inner bg-white rounded-3xl shadow-2xl overflow-hidden cursor-pointer">
+              <div class="restaurant-splash splash-image h-72 flex items-center justify-center text-white font-extrabold text-4xl md:text-5xl tracking-wider drop-shadow-lg select-none">
+                <div class="transform group-hover:scale-110 transition-transform duration-500">🍽️ DIGI-BISTRO</div>
+              </div>
+              <div class="p-8 md:p-10">
+                <h3 class="text-3xl font-extrabold text-gray-900 mb-5">Digi-Bistro</h3>
+                <p class="text-gray-600 mb-7 text-lg leading-relaxed">
+                  Indulge in the finest culinary delights with our carefully crafted menu featuring local and international cuisines.
+                </p>
+                <ul class="space-y-4 mb-8 text-gray-700 text-lg">
+                  <li class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <i class="fas fa-leaf text-green-600"></i>
+                    </div>
+                    Fresh ingredients daily
+                  </li>
+                  <li class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <i class="fas fa-user-chef text-green-600"></i>
+                    </div>
+                    Expert chefs
+                  </li>
+                  <li class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <i class="fas fa-bolt text-green-600"></i>
+                    </div>
+                    Quick online ordering
+                  </li>
+                  <li class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <i class="fas fa-globe-asia text-green-600"></i>
+                    </div>
+                    Authentic Nepali & International dishes
+                  </li>
+                </ul>
+                <div class="btn-gradient bg-gradient-to-r from-red-500 to-red-600 text-white py-3 px-8 rounded-full text-center font-semibold cursor-pointer select-none hover:from-red-600 hover:to-red-700 transition inline-flex items-center">
+                  Enter Restaurant <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Clothing Card -->
+        <div class="splash-card flex-1 max-w-xl">
+          <a href="{{ url_for('clothstore') }}" class="group">
+            <div class="splash-inner bg-white rounded-3xl shadow-2xl overflow-hidden cursor-pointer">
+              <div class="clothing-splash splash-image h-72 flex items-center justify-center text-white font-extrabold text-4xl md:text-5xl tracking-wider drop-shadow-lg select-none">
+                <div class="transform group-hover:scale-110 transition-transform duration-500">👗 FASHION HUB</div>
+              </div>
+              <div class="p-8 md:p-10">
+                <h3 class="text-3xl font-extrabold text-gray-900 mb-5">Fashion Hub</h3>
+                <p class="text-gray-600 mb-7 text-lg leading-relaxed">
+                  Explore the latest trends in fashion with our curated collection of clothing for every style and occasion.
+                </p>
+                <ul class="space-y-4 mb-8 text-gray-700 text-lg">
+                  <li class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <i class="fas fa-star text-green-600"></i>
+                    </div>
+                    Latest fashion trends
+                  </li>
+                  <li class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <i class="fas fa-feather-alt text-green-600"></i>
+                    </div>
+                    Quality materials
+                  </li>
+                  <li class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <i class="fas fa-tag text-green-600"></i>
+                    </div>
+                    Affordable prices
+                  </li>
+                  <li class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <i class="fas fa-tshirt text-green-600"></i>
+                    </div>
+                    Men's & Women's collections
+                  </li>
+                </ul>
+                <div class="btn-gradient bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-8 rounded-full text-center font-semibold cursor-pointer select-none hover:from-purple-700 hover:to-purple-800 transition inline-flex items-center">
+                  Enter Cloth Store <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-20 bg-gradient-to-br from-gray-50 to-indigo-50">
+    <div class="container mx-auto px-6 max-w-7xl">
+      <div class="text-center max-w-3xl mx-auto mb-20">
+        <h2 class="text-4xl font-extrabold text-gray-900 mb-6" data-aos="fade-up">
+          Why Choose <span class="text-indigo-600">ZENORA</span>?
+        </h2>
+        <p class="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="100">
+          We're committed to providing an exceptional experience across all our services
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-default transform hover:-translate-y-2" data-aos="zoom-in">
+          <div class="quality-splash splash-image h-52 flex items-center justify-center text-white font-extrabold text-4xl drop-shadow-lg select-none">
+            ⭐ PREMIUM QUALITY
+          </div>
+          <div class="p-8">
+            <h3 class="text-2xl font-bold mb-4 text-gray-900">Premium Quality</h3>
+            <p class="text-gray-700 leading-relaxed mb-6">
+              We ensure the highest standards in both our food and clothing products, using only the best materials and ingredients.
+            </p>
+            <div class="flex justify-center">
+              <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                <i class="fas fa-award text-indigo-600 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-default transform hover:-translate-y-2" data-aos="zoom-in" data-aos-delay="100">
+          <div class="service-splash splash-image h-52 flex items-center justify-center text-white font-extrabold text-4xl drop-shadow-lg select-none">
+            🌟 EXCELLENT SERVICE
+          </div>
+          <div class="p-8">
+            <h3 class="text-2xl font-bold mb-4 text-gray-900">Excellent Service</h3>
+            <p class="text-gray-700 leading-relaxed mb-6">
+              Our dedicated team provides exceptional customer service every time, ensuring your experience is smooth and enjoyable.
+            </p>
+            <div class="flex justify-center">
+              <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                <i class="fas fa-headset text-indigo-600 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-default transform hover:-translate-y-2" data-aos="zoom-in" data-aos-delay="200">
+          <div class="delivery-splash splash-image h-52 flex items-center justify-center text-white font-extrabold text-4xl drop-shadow-lg select-none">
+            🚀 FAST DELIVERY
+          </div>
+          <div class="p-8">
+            <h3 class="text-2xl font-bold mb-4 text-gray-900">Fast Delivery</h3>
+            <p class="text-gray-700 leading-relaxed mb-6">
+              Quick and reliable delivery service to your doorstep, so you can enjoy our offerings without unnecessary waiting.
+            </p>
+            <div class="flex justify-center">
+              <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                <i class="fas fa-shipping-fast text-indigo-600 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ 
+  <!-- Newsletter Section -->
+  <section class="py-20 bg-gradient-to-r from-indigo-600 to-purple-700 text-white">
+    <div class="container mx-auto px-6 max-w-5xl">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-10">
+        <div class="lg:w-1/2 text-center lg:text-left">
+          <h2 class="text-3xl md:text-4xl font-extrabold mb-6" data-aos="fade-right">
+            Join the ZENORA Community
+          </h2>
+          <p class="text-xl opacity-90 mb-8" data-aos="fade-right" data-aos-delay="100">
+            Email us to know more about us or join us to collaborate with us.
+          </p>
+          <div class="flex space-x-4 justify-center lg:justify-start">
+            <a href="#" class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
+              <i class="fab fa-pinterest"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div class="lg:w-1/2 w-full max-w-md">
+          <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8" data-aos="zoom-in">
+            <form class="newsletter-form">
+              <div class="mb-6">
+                <label class="block text-white text-lg font-medium mb-2">Your Email</label>
+                <input type="email" class="w-full px-6 py-4 rounded-2xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50" placeholder="info.officialzenora.com">
+              </div>
+              <button type="submit" class="btn-gradient w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 px-6 rounded-2xl text-lg font-semibold shadow-lg hover:from-pink-600 hover:to-pink-700 transition">
+                Send Message
+              </button>
+              <p class="text-center mt-4 text-white text-opacity-70 text-sm">
+                We respect your privacy. Unsubscribe at any time.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300 py-16">
+    <div class="container mx-auto px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div>
+          <h3 class="text-2xl font-bold text-white mb-6">~ZENORA</h3>
+          <p class="mb-6 max-w-xs">
+            Bringing you the best in dining and fashion experiences. Quality, service, and style you can trust.
+          </p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-6">Quick Links</h4>
+          <ul class="space-y-4 footer-links">
+            <li><a href="#" class="hover:text-white transition">Home</a></li>
+            <li><a href="#" class="hover:text-white transition">About Us</a></li>
+            <li><a href="#" class="hover:text-white transition">Services</a></li>
+            <li><a href="#" class="hover:text-white transition">Blog</a></li>
+            <li><a href="#" class="hover:text-white transition">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-6">Our Services</h4>
+          <ul class="space-y-4 footer-links">
+            <li><a href="{{ url_for('digibistro') }}" class="hover:text-white transition">Digi-Bistro</a></li>
+            <li><a href="{{ url_for('clothstore') }}" class="hover:text-white transition">Fashion Hub</a></li>
+            <li><a href="#" class="hover:text-white transition">Catering</a></li>
+            <li><a href="#" class="hover:text-white transition">Personal Shopping</a></li>
+            <li><a href="#" class="hover:text-white transition">Corporate Orders</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-semibold text-white mb-6">Contact Us</h4>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <i class="fas fa-map-marker-alt mt-1"></i>
+              <span> 4NO Jagritinagar, Tilottama 08, Nepal</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <i class="fas fa-phone"></i>
+              <span>+977 9766305007</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <i class="fas fa-envelope"></i>
+              <span>info.officialzenora@gmail.com</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <i class="fas fa-clock"></i>
+              <span>Open 24/7</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 mt-12 pt-8 text-center text-sm">
+        <p>© 2025 ZENORA. All rights reserved. Crafted with ❤️ in Nepal</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Particles.js configuration
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.tsParticles) {
+        tsParticles.load("particles-js", {
+          particles: {
+            number: {
+              value: 80,
+              density: {
+                enable: true,
+                value_area: 800
+              }
+            },
+            color: {
+              value: "#ffffff"
+            },
+            shape: {
+              type: "circle",
+              stroke: {
+                width: 0,
+                color: "#000000"
+              }
+            },
+            opacity: {
+              value: 0.5,
+              random: true,
+              anim: {
+                enable: true,
+                speed: 1,
+                opacity_min: 0.1,
+                sync: false
+              }
+            },
+            size: {
+              value: 3,
+              random: true,
+              anim: {
+                enable: true,
+                speed: 2,
+                size_min: 0.1,
+                sync: false
+              }
+            },
+            line_linked: {
+              enable: true,
+              distance: 150,
+              color: "#ffffff",
+              opacity: 0.2,
+              width: 1
+            },
+            move: {
+              enable: true,
+              speed: 1,
+              direction: "none",
+              random: true,
+              straight: false,
+              out_mode: "out",
+              bounce: false,
+              attract: {
+                enable: true,
+                rotateX: 600,
+                rotateY: 1200
+              }
+            }
+          },
+          interactivity: {
+            detect_on: "canvas",
+            events: {
+              onhover: {
+                enable: true,
+                mode: "grab"
+              },
+              onclick: {
+                enable: true,
+                mode: "push"
+              },
+              resize: true
+            },
+            modes: {
+              grab: {
+                distance: 140,
+                line_linked: {
+                  opacity: 1
+                }
+              },
+              push: {
+                particles_nb: 4
+              }
+            }
+          },
+          retina_detect: true
+        });
+      }
+      
+      // Simple scroll animation implementation
+      function initAOS() {
+        const elements = document.querySelectorAll('[data-aos]');
+        
+        function checkPosition() {
+          elements.forEach(el => {
+            const position = el.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            
+            // If element is in viewport
+            if (position.top < windowHeight * 0.85 && position.bottom >= 0) {
+              el.classList.add('aos-animate');
+            }
+          });
+        }
+        
+        // Initial check
+        checkPosition();
+        
+        // Listen for scroll events
+        window.addEventListener('scroll', checkPosition);
+      }
+      
+      initAOS();
+      
+      // Card tilt effect
+      document.querySelectorAll('.splash-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          
+          const angleY = (x - centerX) / 25;
+          const angleX = (centerY - y) / 25;
+          
+          card.querySelector('.splash-inner').style.transform = 
+            `rotateY(${angleY}deg) rotateX(${angleX}deg) scale(1.03)`;
+        });
+        
+        card.addEventListener('mouseleave', () => {
+          card.querySelector('.splash-inner').style.transform = 
+            'rotateY(0deg) rotateX(0deg) scale(1)';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

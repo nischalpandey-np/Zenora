@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preload" href="/static/hero-bg.jpg" as="image">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <title>
+    Payment - 
+    {% if store_type == 'clothing' %}
+      Zenora Clothing
+    {% else %}
+      {% if store_type == 'clothing' %}
+        Zenora Clothing
+      {% else %}
+        Digi Bistro
+      {% endif %}
+    {% endif %}
+  </title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <style>
+    .payment-notice {
+      display: none;
+      padding: 10px;
+      margin-top: 5px;
+      background-color: #f8d7da;
+      color: #721c24;
+      border-radius: 4px;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .payment-notice.show {
+      display: block;
+    }
+    
+    .payment-option.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+        <span class="logo-icon">
+          {% if store_type == 'clothing' %}
+            ZC
+          {% else %}
+            DB
+          {% endif %}
+        </span>
+        {% if store_type == 'clothing' %}
+          Zenora Clothing
+        {% else %}
+          Digi Bistro
+        {% endif %}
+          Zenora Clothing
+        {% else %}
+          Digi Bistro
+        {% endif %}
+      </div>
+      <nav class="nav-primary">
+        <ul class="nav-menu">
+          <li><a href="{{ url_for('index') }}" class="nav-link">Home</a></li>
+          {% if session.user_id %}
+            {% if user and user.is_admin %}
+              <li><a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link">Admin</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('user_profile') }}" class="nav-link">Profile</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}" class="nav-link">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}" class="nav-link">Register</a></li>
+          {% endif %}
+        </ul>
+        <button class="mobile-menu-toggle">☰</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section">
+      <div class="order-form-container">
+        <h2 class="section-title">Select Payment Method</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message flash-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="selected-items">
+          <h3>Your Order:</h3>
+          <ul>
+            {% for item, quantity in items.items() %}
+              <li>{{ item }} - Qty: {{ quantity }} - Total: Nrs 
+                {% if store_type == 'clothing' %}
+                  {{ (CLOTHING_PRICES[item] * quantity) | round(2) }}
+                {% else %}
+                  {{ (ITEM_PRICES[item] * quantity) | round(2) }}
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+          <p><strong>Subtotal: Nrs {{ subtotal | round(2) }}</strong></p>
+          <p>Cash on Delivery: +Nrs {{ delivery_fee | round(2) }} fee</p>
+        </div>
+
+        <form action="{{ url_for('select_payment') }}" method="post" class="payment-form">
+          <div class="payment-options">
+
+            <label class="payment-option disabled">
+              <input type="radio" name="payment_method" value="card" id="card-payment" disabled>
+              <div class="payment-option-content">
+                <span>Credit/Debit Card (Not Available)</span>
+                <img src="/static/card.png" alt="Card" class="payment-icon">
+              </div>
+            </label>
+            <div class="payment-notice show">
+              Credit/Debit Card payments are not available in your country. Please select Cash on Delivery.
+            </div>
+
+            <label class="payment-option">
+              <input type="radio" name="payment_method" value="cash_on_delivery" checked>
+              <div class="payment-option-content">
+                <span>Cash on Delivery (+Nrs {{ delivery_fee | round(2) }})</span>
+                <img src="/static/cash.png" alt="Cash" class="payment-icon">
+              </div>
+            </label>
+          </div>
+
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">Continue to Order Details</button>
+          </div>
+        </form>
+      <p class="copyright">
+        © 2025
+        {% if store_type == 'clothing' %}
+          Zenora Clothing
+        {% else %}
+          {% if store_type == 'clothing' %}
+            Zenora Clothing
+          {% else %}
+            Digi Bistro
+          {% endif %}
+        {% endif %}
+        . All rights reserved.
+      </p>
+          Zenora Clothing
+        {% else %}
+          Digi Bistro
+        {% endif %}
+        . All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Mobile Menu -->
+  <div class="overlay"></div>
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <button class="mobile-menu-toggle">✕</button>
+    </div>
+    <ul class="mobile-nav-menu">
+      <li><a href="{{ url_for('index') }}" class="mobile-nav-link">Home</a></li>
+      {% if session.user_id %}
+        {% if user and user.is_admin %}
+          <li><a href="{{ url_for('admin.admin_dashboard') }}" class="mobile-nav-link">Admin</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('user_profile') }}" class="mobile-nav-link">Profile</a></li>
+        <li><a href="{{ url_for('auth.logout') }}" class="mobile-nav-link">Logout</a></li>
+      {% else %}
+        <li><a href="{{ url_for('auth.login') }}" class="mobile-nav-link">Login</a></li>
+        <li><a href="{{ url_for('auth.register') }}" class="mobile-nav-link">Register</a></li>
+      {% endif %}
+    </ul>
+  </div>
+
+  <script src="/static/scripts.js"></script>
+</body>
+</html>

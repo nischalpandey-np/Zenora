@@ -1,0 +1,331 @@
+<!-- Enhanced Order Detail Page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Details - Gourmet Bistro</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <style>
+    .order-status-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .order-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .order-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .info-card {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .info-card h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #4f46e5;
+    }
+    
+    .status-updates {
+      margin-top: 2rem;
+    }
+    
+    .status-updates h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .update-form {
+      background: #f9fafb;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    
+    .btn-received {
+      background-color: #10b981;
+      color: white;
+    }
+    
+    .btn-not-received {
+      background-color: #ef4444;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">GB</div>
+        <span>Gourmet Bistro</span>
+      </a>
+      <nav class="nav-menu">
+        <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link">Dashboard</a>
+        <a href="{{ url_for('user_profile') }}" class="nav-link">Profile</a>
+        <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="order-status-container">
+        <div class="order-header">
+          <div>
+            <h1 class="text-2xl font-bold">Order #{{ order.order_code }}</h1>
+            <div class="order-status-badge status-{{ order.status }} mt-2">
+              {{ order.status|title }}
+            </div>
+          </div>
+          <div class="order-actions">
+            <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-outline">
+              Back to Dashboard
+            </a>
+          </div>
+        </div>
+
+        <div class="order-info-grid">
+          <div class="info-card">
+            <h3>Customer Information</h3>
+            <div class="space-y-2">
+              <div><strong>Name:</strong> {{ order.customer_name }}</div>
+              <div><strong>Phone:</strong> {{ order.phone_number }}</div>
+              {% if order.user_id %}
+              <div><strong>Account:</strong> {{ order.username }} ({{ order.email }})</div>
+              {% endif %}
+            </div>
+          </div>
+          
+          <div class="info-card">
+            <h3>Delivery Details</h3>
+            <div class="space-y-2">
+              <div><strong>Address:</strong> {{ order.customer_address }}</div>
+              <div><strong>Method:</strong> {{ order.payment_method|replace('_', ' ')|title }}</div>
+              <div><strong>Fee:</strong> {{ order.delivery_fee|format_currency }}</div>
+            </div>
+          </div>
+          
+          <div class="info-card">
+            <h3>Order Summary</h3>
+            <div class="space-y-2">
+              <div><strong>Date:</strong> {{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</div>
+              <div><strong>Store Type:</strong> {{ order.store_type|title }}</div>
+              <div><strong>Total:</strong> {{ order.total_price|format_currency }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="text-xl font-bold">Order Items</h2>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="order-items-table w-full">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for item in items %}
+                  <tr>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ (item.item_total / item.quantity)|format_currency if item.quantity > 0 else 0|format_currency }}</td>
+                    <td>{{ item.item_total|format_currency }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" class="text-right font-bold">Subtotal:</td>
+                    <td class="font-bold">{{ (order.total_price - order.delivery_fee)|format_currency }}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" class="text-right font-bold">Delivery Fee:</td>
+                    <td class="font-bold">{{ order.delivery_fee|format_currency }}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" class="text-right font-bold">Total:</td>
+                    <td class="font-bold text-primary">{{ order.total_price|format_currency }}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {% if order.admin_notes or order.decline_reason %}
+        <div class="card">
+          <div class="card-header">
+            <h2 class="text-xl font-bold">Admin Notes</h2>
+          </div>
+          <div class="card-body">
+            {% if order.decline_reason %}
+            <div class="mb-4">
+              <h3 class="font-bold text-red-600">Decline Reason:</h3>
+              <p>{{ order.decline_reason }}</p>
+            </div>
+            {% endif %}
+            
+            {% if order.admin_notes %}
+            <div>
+              <h3 class="font-bold">Notes:</h3>
+              <p>{{ order.admin_notes }}</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="status-updates">
+          <h3>Update Order Status</h3>
+          
+          <div class="timeline">
+            <div class="timeline-item {{ 'active' if order.status == 'pending' }}">
+              <div class="timeline-dot"></div>
+              <div>
+                <h4 class="font-bold">Pending</h4>
+                <p class="text-sm text-gray-500">Order received, awaiting approval</p>
+              </div>
+            </div>
+            
+            <div class="timeline-item {{ 'active' if order.status in ['approved', 'processing', 'completed'] }}">
+              <div class="timeline-dot"></div>
+              <div>
+                <h4 class="font-bold">Approved</h4>
+                <p class="text-sm text-gray-500">Order approved and in preparation</p>
+              </div>
+            </div>
+            
+            <div class="timeline-item {{ 'active' if order.status in ['processing', 'completed'] }}">
+              <div class="timeline-dot"></div>
+              <div>
+                <h4 class="font-bold">Processing</h4>
+                <p class="text-sm text-gray-500">Order being prepared for delivery</p>
+              </div>
+            </div>
+            
+            <div class="timeline-item {{ 'active' if order.status == 'completed' }}">
+              <div class="timeline-dot"></div>
+              <div>
+                <h4 class="font-bold">Completed</h4>
+                <p class="text-sm text-gray-500">Order delivered successfully</p>
+              </div>
+            </div>
+          </div>
+          
+          <form method="POST" class="update-form">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label">Update Status</label>
+                <select name="status" class="form-control">
+                  <option value="pending" {{ 'selected' if order.status == 'pending' }}>Pending</option>
+                  <option value="approved" {{ 'selected' if order.status == 'approved' }}>Approved</option>
+                  <option value="processing" {{ 'selected' if order.status == 'processing' }}>Processing</option>
+                  <option value="completed" {{ 'selected' if order.status == 'completed' }}>Completed</option>
+                  <option value="cancelled" {{ 'selected' if order.status == 'cancelled' }}>Cancelled</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Delivery Verification</label>
+                <div class="flex gap-2">
+                  <button type="button" class="btn btn-received flex-1" 
+                          name="delivery_status" value="received">
+                    ✅ Received
+                  </button>
+                  <button type="button" class="btn btn-not-received flex-1" 
+                          name="delivery_status" value="not_received">
+                    ❌ Not Received
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Admin Notes</label>
+              <textarea name="admin_notes" class="form-control" 
+                        placeholder="Add notes about this order">{{ order.admin_notes or '' }}</textarea>
+            </div>
+            
+            <div class="flex justify-end gap-2 mt-4">
+              <button type="reset" class="btn btn-outline">Reset</button>
+              <button type="submit" class="btn btn-primary">Update Order</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+ <!-- Add toast container -->
+<div class="toast-container fixed top-4 right-4 z-50 space-y-2"></div>
+
+<script>
+    // Toast implementation
+    function showToast(message, category) {
+        const toast = document.createElement('div');
+        toast.className = `toast flex items-center p-4 rounded-lg shadow-lg text-white bg-${category === 'success' ? 'green' : 'red'}-500`;
+        toast.innerHTML = `
+            <span class="mr-2">${category === 'success' ? '✓' : '⚠️'}</span>
+            ${message}
+            <button class="ml-4" onclick="this.parentElement.remove()">×</button>
+        `;
+        document.querySelector('.toast-container').appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Delivery status handling
+    document.querySelectorAll('[name="delivery_status"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const statusSelect = document.querySelector('[name="status"]');
+            if (this.value === 'received') {
+                statusSelect.value = 'completed';
+                showToast('Order marked as delivered!', 'success');
+            } else {
+                statusSelect.value = 'cancelled';
+                showToast('Order marked as not delivered!', 'error');
+            }
+        });
+    });
+
+    // Form submission confirmation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (!confirm('Are you sure you want to update this order?')) {
+            e.preventDefault();
+        }
+    });
+</script>
+
+</body>
+</html>
