@@ -108,3 +108,75 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Star Rating Interaction
+  document.querySelectorAll('.star-rating').forEach(ratingContainer => {
+    const inputs = ratingContainer.querySelectorAll('input[type="radio"]');
+    
+    inputs.forEach(input => {
+      input.addEventListener('change', function() {
+        const selectedRating = this.value;
+        // You can store this value if needed
+      });
+    });
+  });
+
+  // Review Form Submission
+  const reviewForm = document.getElementById('review-form');
+  if (reviewForm) {
+    reviewForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const reviewData = {
+        order_id: formData.get('order_id'),
+        rating: formData.get('rating'),
+        comment: formData.get('comment')
+      };
+      
+      if (!reviewData.rating) {
+        alert('Please select a rating');
+        return;
+      }
+      
+      fetch('/submit_review', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify(reviewData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast('Review submitted successfully!', 'success');
+          setTimeout(() => {
+            location.reload();
+          }, 1500);
+        } else {
+          showToast('Failed to submit review. Please try again.', 'error');
+        }
+      });
+    });
+  }
+
+  // Toast implementation
+  function showToast(message, category) {
+    const toastContainer = document.querySelector('.toast-container') || document.createElement('div');
+    toastContainer.className = 'toast-container fixed top-4 right-4 z-50 space-y-2';
+    document.body.appendChild(toastContainer);
+    
+    const toast = document.createElement('div');
+    toast.className = `toast flex items-center p-4 rounded-lg shadow-lg text-white bg-${category === 'success' ? 'green' : 'red'}-500`;
+    toast.innerHTML = `
+      <span class="mr-2">${category === 'success' ? '✓' : '⚠️'}</span>
+      ${message}
+      <button class="ml-4" onclick="this.parentElement.remove()">×</button>
+    `;
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+});

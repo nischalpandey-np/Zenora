@@ -6,18 +6,7 @@
   <link rel="preload" href="/static/hero-bg.jpg" as="image">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <title>
-    Payment - 
-    {% if store_type == 'clothing' %}
-      Zenora Clothing
-    {% else %}
-      {% if store_type == 'clothing' %}
-        Zenora Clothing
-      {% else %}
-        Digi Bistro
-      {% endif %}
-    {% endif %}
-  </title>
+  <title>Payment - Gourmet Bistro</title>
   <link rel="stylesheet" href="/static/styles.css" />
   <style>
     .payment-notice {
@@ -40,22 +29,12 @@
     }
   </style>
 </head>
-        <span class="logo-icon">
-          {% if store_type == 'clothing' %}
-            ZC
-          {% else %}
-            DB
-          {% endif %}
-        </span>
-        {% if store_type == 'clothing' %}
-          Zenora Clothing
-        {% else %}
-          Digi Bistro
-        {% endif %}
-          Zenora Clothing
-        {% else %}
-          Digi Bistro
-        {% endif %}
+<body>
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo">
+        <span class="logo-icon">GB</span>
+        Gourmet Bistro
       </div>
       <nav class="nav-primary">
         <ul class="nav-menu">
@@ -135,25 +114,13 @@
             <button type="submit" class="btn btn-primary">Continue to Order Details</button>
           </div>
         </form>
-      <p class="copyright">
-        © 2025
-        {% if store_type == 'clothing' %}
-          Zenora Clothing
-        {% else %}
-          {% if store_type == 'clothing' %}
-            Zenora Clothing
-          {% else %}
-            Digi Bistro
-          {% endif %}
-        {% endif %}
-        . All rights reserved.
-      </p>
-          Zenora Clothing
-        {% else %}
-          Digi Bistro
-        {% endif %}
-        . All rights reserved.
-      </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="copyright">© 2025 Gourmet Bistro. All rights reserved.</p>
     </div>
   </footer>
 

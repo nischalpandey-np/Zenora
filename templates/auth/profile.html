@@ -6,15 +6,89 @@
   <link rel="preload" href="/static/hero-bg.jpg" as="image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <title>Your Profile - Gourmet Bistro</title>
+  <title>Your Profile - Digi Bistro</title>
   <link rel="stylesheet" href="/static/styles.css">
+  <style>
+    /* Review Styles */
+    .review-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background-color: #f9fafb;
+      border-radius: 0.5rem;
+    }
+    
+    .star-rating {
+      display: inline-flex;
+      direction: rtl;
+      unicode-bidi: bidi-override;
+    }
+    
+    .star-rating input {
+      display: none;
+    }
+    
+    .star-rating label {
+      color: #ccc;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+      color: #ffc107;
+    }
+    
+    .review-card {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1rem 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .review-card .stars {
+      color: #ffc107;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .delivery-verification {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .btn-received {
+      background-color: #10b981;
+      color: white;
+      flex: 1;
+    }
+    
+    .btn-not-received {
+      background-color: #ef4444;
+      color: white;
+      flex: 1;
+    }
+    
+    .review-form {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin-top: 1rem;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <header class="header">
     <div class="container header-container">
       <div class="logo">
-        <span class="logo-icon">GB</span>
-        Gourmet Bistro
+        <span class="logo-icon">DB</span>
+        Digi Bistro
       </div>
       <nav class="nav-primary">
         <ul class="nav-menu">
@@ -86,6 +160,7 @@
                 <th>Date</th>
                 <th>Total</th>
                 <th>Status</th>
+                <th>Review</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -104,6 +179,15 @@
                       <span class="status-tooltip">Reason: {{ order.decline_reason }}</span>
                     {% endif %}
                   </span>
+                </td>
+                <td>
+                  {% if order.status == 'completed' and order.review %}
+                    <div class="star-rating">
+                      {% for i in range(5) %}
+                        <span class="star {% if i < order.review.rating %}filled{% endif %}">★</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
                 </td>
                 <td>
                   <a href="{{ url_for('user_order_detail', order_id=order.order_id) }}" class="btn btn-sm btn-outline">Details</a>

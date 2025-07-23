@@ -34,17 +34,30 @@
       </nav>
     </div>
   </header>
+<section class="hero food-hero" style="position: relative;">
+  <!-- Background Image -->
+  <img src="/static/images/hero.jpg" alt="Hero Image"
+       style="position: absolute;
+              top: 0;
+              left: 0;
+              width: 100vw;
+              height: 100%;
+              object-fit: cover;
+              z-index: -1;">
 
-  <section class="hero food-hero">
-    <div class="hero-content">
-      <h1 class="hero-title">Digital Dining Excellence</h1>
-      <p class="hero-subtitle">Experience gourmet flavors delivered to your doorstep</p>
-      <div class="hero-cta">
-        <a href="{{ url_for('view_menu') }}" class="btn btn-primary btn-lg">Order Now</a>
-        <a href="#specials" class="btn btn-glass">Today's Specials</a>
-      </div>
+  <!-- Hero Content -->
+  <div class="hero-content" style="position: relative; z-index: 1; text-align: center; color: white; padding-top: 10vh;">
+    <h1 class="hero-title">Digital Dining Excellence</h1>
+    <p class="hero-subtitle">Experience gourmet flavors delivered to your doorstep</p>
+    
+    <div class="hero-cta" style="margin-top: 2rem;">
+      <a href="{{ url_for('view_menu') }}" class="btn btn-primary btn-lg" style="margin-right: 1rem;">Order Now</a>
+      <a href="#specials" class="btn btn-glass">Today's Specials</a>
     </div>
-  </section>
+  </div>
+</section>
+
+
 
   <section class="section" id="specials">
     <div class="container">
@@ -54,7 +67,7 @@
       <div class="item-grid">
         <div class="item-card hover-grow">
           <div class="item-image-container">
-            <img src="/static/pasta.jpg" alt="Pasta" class="item-image">
+            <img src="/static/images/pasta.jpg" alt="Pasta" class="item-image">
             <div class="item-badge">Chef's Pick</div>
           </div>
           <div class="item-content">
@@ -71,7 +84,7 @@
 
         <div class="item-card hover-grow">
           <div class="item-image-container">
-            <img src="/static/momo.jpg" alt="Momo" class="item-image">
+            <img src="/static/images/momo.jpg" alt="Momo" class="item-image">
             <div class="item-badge">Popular</div>
           </div>
           <div class="item-content">
@@ -88,7 +101,7 @@
 
         <div class="item-card hover-grow">
           <div class="item-image-container">
-            <img src="/static/burger.jpg" alt="Burger" class="item-image">
+            <img src="/static/images/burger.jpg" alt="Burger" class="item-image">
             <div class="item-badge">New</div>
           </div>
           <div class="item-content">

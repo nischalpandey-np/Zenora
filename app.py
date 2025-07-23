@@ -1,32 +1,37 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, session
+"""
+Main application file for the E-commerce platform with restaurant and clothing stores.
+Handles user authentication, menu display, order processing, and profile management.
+"""
+
+from flask import Flask, render_template, redirect, url_for, flash, request, session, jsonify
 from functools import wraps
 from dotenv import load_dotenv
 import random
 import string
 import json
 import os
+from datetime import datetime
 
+# Custom modules for DB and route management
 from init_database import save_order_to_db, get_db_connection, create_tables
 from auth import auth_bp
 from admin import admin_bp
 
-# Load environment variables
+# Load environment variables from .env file
 load_dotenv()
 
-# Flask app setup
+# Initialize Flask application
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'default_secret_key')
 
-# Register Blueprints
+# Register modular Blueprints
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(admin_bp, url_prefix='/admin')
 
-
-
-# Check if running on PythonAnywhere
+# Determine if the app is running on PythonAnywhere
 IS_PYTHONANYWHERE = 'PYTHONANYWHERE_DOMAIN' in os.environ
 
-# Price Lists
+# Static price list for restaurant and clothing items
 ITEM_PRICES = {
     "Pasta": 120.00, "Chi-Momo": 160.00, "Burger": 220.00,
     "Coffee": 120.00, "Tea": 30.00, "Chowmein": 180.00,
@@ -43,28 +48,35 @@ CLOTHING_PRICES = {
 
 DELIVERY_FEE = 10.00
 
-
-
-
-# -----------------------
+# -------------------------
 # Utility Functions
-# -----------------------
+# -------------------------
 
 def format_currency(value):
+    """Format a float value into Nepali Rupees string."""
     return f"Nrs: {value:,.2f}"
 
 @app.template_filter('format_currency')
 def format_currency_filter(value):
+    """Template filter for currency formatting."""
     return format_currency(value)
 
 def generate_order_code():
+    """Generate a random 6-character alphanumeric order code."""
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
-# -----------------------
-# Decorators
-# -----------------------
+def validate_phone_number(phone):
+    """Validate Nepali phone number format."""
+    if len(phone) != 10 or not phone.startswith(('98', '97', '96')):
+        return False
+    return phone.isdigit()
+
+# -------------------------
+# Authentication Decorator
+# -------------------------
 
 def login_required(f):
+    """Decorator to ensure user is logged in."""
     @wraps(f)
     def wrapper(*args, **kwargs):
         if 'user_id' not in session:
@@ -73,12 +85,13 @@ def login_required(f):
         return f(*args, **kwargs)
     return wrapper
 
-# -----------------------
+# -------------------------
 # Context Processors
-# -----------------------
+# -------------------------
 
 @app.context_processor
 def inject_user():
+    """Inject logged-in user data into all templates."""
     user = None
     if 'user_id' in session:
         conn = get_db_connection()
@@ -91,45 +104,44 @@ def inject_user():
 
 @app.context_processor
 def inject_cart_count():
+    """Inject cart item count into templates."""
     cart_count = 0
     if 'items' in session:
-        items = json.loads(session['items'])
-        cart_count = sum(items.values())
+        try:
+            items = json.loads(session['items'])
+            cart_count = sum(items.values())
+        except json.JSONDecodeError:
+            session.pop('items', None)
     return {'cart_count': cart_count}
 
-# -----------------------
-# Routes
-# -----------------------
+# -------------------------
+# Public Routes
+# -------------------------
 
 @app.route('/')
 @app.route('/index.html')
 def index():
+    """Render the home page."""
     return render_template('index.html')
 
-# @app.route('/contact')
-# def contact():
-#     return render_template('contact.html')
-
-# @app.route('/about')
-# def about():
-#     return render_template('about.html')
-
-
-# --- Restaurant Routes ---
+# -------------------------
+# Restaurant Menu
+# -------------------------
 
 @app.route('/digibistro')
 def digibistro():
+    """Render the digital bistro landing page."""
     return render_template('gourmetbistro/digibistro.html', menu_items=ITEM_PRICES)
 
 @app.route('/restaurant/menu', methods=['GET', 'POST'])
 @login_required
 def view_menu():
+    """Handle restaurant menu viewing and item selection."""
     if request.method == 'POST':
         items = {
             item: int(request.form.get(item, 0))
             for item in ITEM_PRICES if int(request.form.get(item, 0)) > 0
         }
-
         if not items:
             flash("Please select at least one item!", "error")
             return redirect(url_for('view_menu'))
@@ -140,21 +152,24 @@ def view_menu():
 
     return render_template('gourmetbistro/viewMenu.html', menu_items=ITEM_PRICES)
 
-# --- Clothing Routes ---
+# -------------------------
+# Clothing Menu
+# -------------------------
 
 @app.route('/clothstore')
 def clothstore():
+    """Render the clothing store landing page."""
     return render_template('cloth/clothstore.html', clothing_items=CLOTHING_PRICES)
 
 @app.route('/clothing/menu', methods=['GET', 'POST'])
 @login_required
 def view_clothing():
+    """Handle clothing menu viewing and item selection."""
     if request.method == 'POST':
         items = {
             item: int(request.form.get(item, 0))
             for item in CLOTHING_PRICES if int(request.form.get(item, 0)) > 0
         }
-
         if not items:
             flash("Please select at least one item!", "error")
             return redirect(url_for('view_clothing'))
@@ -165,17 +180,24 @@ def view_clothing():
 
     return render_template('cloth/viewClothing.html', clothing_items=CLOTHING_PRICES)
 
-# --- Shared Ordering Routes ---
+# -------------------------
+# Payment & Order Details
+# -------------------------
 
 @app.route('/select-payment', methods=['GET', 'POST'])
 @login_required
 def select_payment():
+    """Handle payment method selection."""
+    if 'items' not in session:
+        flash("Your cart is empty. Please add items first.", "error")
+        return redirect(url_for('index'))
+
     if request.method == 'POST':
         method = request.form.get('payment_method')
         if method not in ['card', 'cash_on_delivery']:
             flash("Invalid payment method selected.", "error")
             return redirect(url_for('select_payment'))
-        
+
         if method == 'card':
             flash("Online payment is not available. Please use Cash on Delivery.", "error")
             return redirect(url_for('select_payment'))
@@ -183,28 +205,33 @@ def select_payment():
         session['payment_method'] = method
         return redirect(url_for('order_details'))
 
-    items = json.loads(session.get('items', '{}'))
+    try:
+        items = json.loads(session['items'])
+    except json.JSONDecodeError:
+        session.pop('items', None)
+        flash("Invalid cart data. Please try again.", "error")
+        return redirect(url_for('index'))
+
     store_type = session.get('store_type', 'restaurant')
     price_list = CLOTHING_PRICES if store_type == 'clothing' else ITEM_PRICES
-
-    if not items:
-        flash("Please select items first.", "error")
-        return redirect(url_for('index'))
 
     subtotal = sum(price_list[item] * qty for item, qty in items.items())
 
     return render_template('ordering/order_payment.html',
-                           items=items,
-                           subtotal=subtotal,
-                           delivery_fee=DELIVERY_FEE,
-                           item_prices=price_list,
-                           store_type=store_type,
-                           ITEM_PRICES=ITEM_PRICES,
-                           CLOTHING_PRICES=CLOTHING_PRICES)
+                         items=items,
+                         subtotal=subtotal,
+                         delivery_fee=DELIVERY_FEE,
+                         item_prices=price_list,
+                         store_type=store_type)
 
 @app.route('/order-details', methods=['GET', 'POST'])
 @login_required
 def order_details():
+    """Handle order details submission and order confirmation."""
+    if 'items' not in session or 'payment_method' not in session:
+        flash("Please complete your order process from the beginning.", "error")
+        return redirect(url_for('index'))
+
     if request.method == 'POST':
         required = ['customer-name', 'phone-number', 'customer-address']
         if not all(field in request.form for field in required):
@@ -216,9 +243,15 @@ def order_details():
         customer_address = request.form['customer-address'].strip()
         house_no = request.form.get('house-no', '').strip()
 
+        # Validate phone number
+        if not validate_phone_number(phone_number):
+            flash("Please enter a valid Nepali phone number (98/97/96XXXXXXXX).", "error")
+            return redirect(url_for('order_details'))
+
         try:
             items = json.loads(session['items'])
-        except Exception:
+        except json.JSONDecodeError:
+            session.pop('items', None)
             flash("Invalid order data.", "error")
             return redirect(url_for('index'))
 
@@ -253,31 +286,34 @@ def order_details():
             flash("Order failed. Please try again.", "error")
             return redirect(url_for('index'))
 
-        # Clear cart after successful order
+        # Clear session data
         session.pop('items', None)
         session.pop('payment_method', None)
         session.pop('store_type', None)
 
         return render_template('ordering/order_summary.html',
-                               customer_name=customer_name,
-                               customer_address=customer_address,
-                               house_no=house_no or 'N/A',
-                               phone_number=phone_number,
-                               order_details=order_details,
-                               subtotal=subtotal,
-                               total_price=total_price,
-                               payment_method='Cash on Delivery',
-                               order_code=order_code,
-                               delivery_fee=delivery_fee,
-                               store_type=store_type)
+                             customer_name=customer_name,
+                             customer_address=customer_address,
+                             house_no=house_no or 'N/A',
+                             phone_number=phone_number,
+                             order_details=order_details,
+                             subtotal=subtotal,
+                             total_price=total_price,
+                             payment_method='Cash on Delivery',
+                             order_code=order_code,
+                             delivery_fee=delivery_fee,
+                             store_type=store_type)
 
     return render_template('ordering/order.html')
 
-# --- User Profile ---
+# -------------------------
+# User Profile
+# -------------------------
 
 @app.route('/profile')
 @login_required
 def user_profile():
+    """Display user profile with order history."""
     user_id = session['user_id']
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -298,9 +334,100 @@ def user_profile():
 
     return render_template('auth/profile.html', user=user, orders=orders)
 
+@app.route('/order/<int:order_id>/received', methods=['POST'])
+@login_required
+def mark_order_received(order_id):
+    """Mark an order as received by the user."""
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Verify the order belongs to the user
+    cursor.execute("SELECT user_id FROM orders WHERE order_id = %s", (order_id,))
+    order = cursor.fetchone()
+    
+    if not order or order['user_id'] != session['user_id']:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    cursor.execute("""
+        UPDATE orders 
+        SET received_status = 'received'
+        WHERE order_id = %s
+    """, (order_id,))
+    
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    return jsonify({'status': 'success'})
+
+@app.route('/order/<int:order_id>/not-received', methods=['POST'])
+@login_required
+def mark_order_not_received(order_id):
+    """Mark an order as not received by the user."""
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Verify the order belongs to the user
+    cursor.execute("SELECT user_id FROM orders WHERE order_id = %s", (order_id,))
+    order = cursor.fetchone()
+    
+    if not order or order['user_id'] != session['user_id']:
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    cursor.execute("""
+        UPDATE orders 
+        SET received_status = 'not_received',
+            status = 'cancelled'
+        WHERE order_id = %s
+    """, (order_id,))
+    
+    conn.commit()
+    cursor.close()
+    conn.close()
+    
+    return jsonify({'status': 'success'})
+
+@app.route('/order/<int:order_id>/review', methods=['POST'])
+@login_required
+def submit_review(order_id):
+    """Submit a review for a received order."""
+    data = request.get_json()
+    rating = data.get('rating')
+    review = data.get('review')
+    
+    if not rating or not review:
+        return jsonify({'error': 'Rating and review are required'}), 400
+    
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Verify the order belongs to the user and was received
+    cursor.execute("""
+        SELECT user_id, received_status 
+        FROM orders 
+        WHERE order_id = %s
+    """, (order_id,))
+    order = cursor.fetchone()
+    
+    if not order or order['user_id'] != session['user_id'] or order['received_status'] != 'received':
+        return jsonify({'error': 'Unauthorized'}), 403
+    
+    # Store the review in the database
+    cursor.execute("""
+        INSERT INTO reviews (order_id, user_id, rating, comment)
+        VALUES (%s, %s, %s, %s)
+    """, (order_id, session['user_id'], rating, review))
+    conn.commit()
+    
+    cursor.close()
+    conn.close()
+    
+    return jsonify({'status': 'success'})
+
 @app.route('/profile/order/<int:order_id>')
 @login_required
 def user_order_detail(order_id):
+    """Display detailed information for a specific order."""
     user_id = session['user_id']
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -328,19 +455,23 @@ def user_order_detail(order_id):
 
     return render_template('ordering/order_detail.html', order=order, items=items)
 
-# --- Error Pages ---
+# -------------------------
+# Error Handlers
+# -------------------------
 
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     return render_template('404.html'), 404
+@app.errorhandler(404)
+def page_not_found(e):
+    """Handle 404 errors."""
+    return render_template('errors/404.html'), 404
 
-# @app.errorhandler(500)
-# def internal_server_error(e):
-#     return render_template('500.html'), 500
+@app.errorhandler(500)
+def internal_server_error(e):
+    """Handle 500 errors."""
+    return render_template('errors/500.html'), 500
 
-# -----------------------
-# Run the App
-# -----------------------
+# -------------------------
+# App Runner
+# -------------------------
 
 if __name__ == '__main__':
     create_tables()

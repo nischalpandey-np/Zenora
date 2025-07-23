@@ -79,23 +79,24 @@ def create_tables():
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             is_admin BOOLEAN DEFAULT FALSE
         )""",
-        """CREATE TABLE IF NOT EXISTS orders (
-            order_id INT AUTO_INCREMENT PRIMARY KEY,
-            customer_name VARCHAR(100) NOT NULL,
-            phone_number VARCHAR(15) NOT NULL,
-            customer_address TEXT NOT NULL,
-            total_price DECIMAL(10,2) NOT NULL,
-            order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            user_id INT NULL,
-            payment_method VARCHAR(20) NOT NULL,
-            order_code VARCHAR(10) UNIQUE,
-            delivery_fee DECIMAL(10,2) DEFAULT 0,
-            status ENUM('pending', 'processing', 'completed', 'cancelled', 'approved', 'declined') DEFAULT 'pending',
-            admin_notes TEXT NULL,
-            decline_reason TEXT NULL,
-            store_type ENUM('clothing', 'restaurant') DEFAULT 'restaurant',
-            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
-        )""",
+       """CREATE TABLE IF NOT EXISTS orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    customer_address TEXT NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id INT NULL,
+    payment_method VARCHAR(20) NOT NULL,
+    order_code VARCHAR(10) UNIQUE,
+    delivery_fee DECIMAL(10,2) DEFAULT 0,
+    status ENUM('pending', 'processing', 'completed', 'cancelled', 'approved', 'declined') DEFAULT 'pending',
+    admin_notes TEXT NULL,
+    decline_reason TEXT NULL,
+    store_type ENUM('clothing', 'restaurant') DEFAULT 'restaurant',
+    received_status ENUM('pending', 'received', 'not_received') DEFAULT 'pending',
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+)""",
         """CREATE TABLE IF NOT EXISTS order_items (
             id INT AUTO_INCREMENT PRIMARY KEY,
             order_id INT NOT NULL,
@@ -104,6 +105,16 @@ def create_tables():
             item_total DECIMAL(10,2) NOT NULL,
             notes TEXT NULL,
             FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
+        )""", 
+        """CREATE TABLE IF NOT EXISTS reviews (
+            review_id INT AUTO_INCREMENT PRIMARY KEY,
+            order_id INT NOT NULL,
+            user_id INT NOT NULL,
+            rating INT NOT NULL,
+            comment TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )"""
     ]
 

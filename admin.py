@@ -164,7 +164,7 @@ def admin_order_detail(order_id):
         logger.error(f"Error in admin order detail: {str(e)}")
         flash("An error occurred while processing the order.", "error")
         return redirect(url_for('admin.admin_dashboard'))
-
+    
 @admin_bp.route('/order/update', methods=['POST'])
 @admin_required
 def admin_update_order():
@@ -174,6 +174,7 @@ def admin_update_order():
         decline_reason = request.form.get('decline_reason', '')
         admin_notes = request.form.get('admin_notes', '')
         
+        # Validate inputs
         if not order_id:
             flash("Order ID is missing", "error")
             return redirect(url_for('admin.admin_dashboard'))
@@ -191,19 +192,22 @@ def admin_update_order():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         
+        from datetime import datetime
+
+        # Update order status and notes
         cursor.execute("""
             UPDATE orders 
             SET status = %s, 
                 decline_reason = %s,
-                admin_notes = %s
+                admin_notes = %s,
+                updated_at = %s
             WHERE order_id = %s
-        """, (new_status, decline_reason if new_status == 'declined' else None, admin_notes, order_id))
+        """, (new_status, decline_reason if new_status == 'declined' else None, admin_notes, datetime.now(), order_id))
         
         conn.commit()
         cursor.close()
         conn.close()
         
-        # Fixed: Replace add_toast with flash
         flash(f"Order status updated to {new_status}.", "success")
         return redirect(url_for('admin.admin_order_detail', order_id=order_id))
         
