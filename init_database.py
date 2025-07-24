@@ -1,11 +1,14 @@
-import mysql.connector
 import os
+os.environ["MYSQLC_CONNECTOR_PURE"] = "True"
+import mysql.connector
+
 import time
 import logging
 from typing import Optional, Dict, Any, Union
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash
 
+# Load environment variables
 load_dotenv()
 
 # --------------------------------------
@@ -20,39 +23,27 @@ logger.addHandler(handler)
 logger.propagate = False
 
 # --------------------------------------
-# Database Configuration
+# Database Configuration for PythonAnywhere
 # --------------------------------------
-DB_CONFIG = {
-    'host': os.getenv('DB_HOST', 'localhost'),
-    'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', ''),
-    'database': os.getenv('DB_NAME', 'digibistro'),
-    'port': 3306,
-    'auth_plugin': 'mysql_native_password',
-    'connect_timeout': 5
-}
+# DB_CONFIG = {
+#     'host': 'zenora.mysql.pythonanywhere-services.com',
+#     'user': 'zenora',
+#     'password': 'nischal@__',
+#     'database': 'zenora$digibistro',
+#     'port': 3306,
+#     'connect_timeout': 5
+# }
 
-# --------------------------------------
-# Ensure Database Exists
-# --------------------------------------
-def create_database_if_not_exists():
-    try:
-        conn = mysql.connector.connect(
-            host=DB_CONFIG['host'],
-            user=DB_CONFIG['user'],
-            password=DB_CONFIG['password'],
-            port=DB_CONFIG['port']
-        )
-        cursor = conn.cursor()
-        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {DB_CONFIG['database']} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
-        logger.info(f"Database '{DB_CONFIG['database']}' ensured.")
-    except mysql.connector.Error as err:
-        logger.error(f"Error creating database: {err}")
-        raise
-    finally:
-        if conn and conn.is_connected():
-            cursor.close()
-            conn.close()
+
+
+DB_CONFIG = {
+    'host': os.getenv('DB_HOST'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'database': os.getenv('DB_NAME'),
+    'port': int(os.getenv('DB_PORT', 3306)),
+    'connect_timeout': int(os.getenv('DB_TIMEOUT', 5))
+}
 
 # --------------------------------------
 # Get DB Connection
@@ -70,11 +61,9 @@ def get_db_connection():
     raise Exception("Database connection failed after retries.")
 
 # --------------------------------------
-# Create Tables
+# Create Tables (Run manually only)
 # --------------------------------------
 def create_tables():
-    create_database_if_not_exists()
-
     table_definitions = [
         """
         CREATE TABLE IF NOT EXISTS users (
@@ -149,22 +138,18 @@ def create_tables():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
-        # Enable foreign key checks
+
         cursor.execute("SET FOREIGN_KEY_CHECKS=0")
-        
         for table_sql in table_definitions:
             try:
                 cursor.execute(table_sql)
-                logger.info(f"Table created successfully")
+                logger.info("Table created successfully.")
             except mysql.connector.Error as err:
                 logger.error(f"Error creating table: {err}")
                 raise
-        
-        # Re-enable foreign key checks
         cursor.execute("SET FOREIGN_KEY_CHECKS=1")
         conn.commit()
-        
+
     except Exception as e:
         logger.error(f"Error creating tables: {e}")
         if conn:
@@ -177,7 +162,7 @@ def create_tables():
     logger.info("All tables created successfully.")
 
 # --------------------------------------
-# Save User to Database
+# Save User
 # --------------------------------------
 def save_user(first_name: str, last_name: str, username: str, email: str, password: str) -> Optional[int]:
     password_hash = generate_password_hash(password)
@@ -224,7 +209,7 @@ def get_user(username: str) -> Optional[Dict[str, Any]]:
             conn.close()
 
 # --------------------------------------
-# Save Order and Items to Database
+# Save Order
 # --------------------------------------
 def save_order_to_db(
     customer_name: str,
@@ -282,9 +267,3 @@ def save_order_to_db(
         if conn and conn.is_connected():
             cursor.close()
             conn.close()
-
-# --------------------------------------
-# Run When Called Directly
-# --------------------------------------
-if __name__ == '__main__':
-    create_tables()
