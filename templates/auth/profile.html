@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preload" href="/static/hero-bg.jpg" as="image">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <title>Your Profile - Digi Bistro</title>
-  <link rel="stylesheet" href="/static/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Profile - ZENORA</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="preload" href="/static/hero-bg.jpg" as="image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
   <style>
     /* Review Styles */
     .review-section {
@@ -16,70 +17,158 @@
       background-color: #f9fafb;
       border-radius: 0.5rem;
     }
-    
+
     .star-rating {
-      display: inline-flex;
-      direction: rtl;
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
       unicode-bidi: bidi-override;
     }
-    
     .star-rating input {
       display: none;
     }
-    
     .star-rating label {
+      font-size: 2rem;
       color: #ccc;
-      font-size: 1.5rem;
       cursor: pointer;
+      transition: color 0.2s;
     }
-    
     .star-rating label:hover,
     .star-rating label:hover ~ label,
-    .star-rating input:checked ~ label {
+    .star-rating input:checked ~ label,
+    .star-rating .filled {
       color: #ffc107;
     }
-    
+
     .review-card {
       background: white;
       border-radius: 0.5rem;
       padding: 1rem;
       margin: 1rem 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
-    
+
     .review-card .stars {
       color: #ffc107;
       font-size: 1.2rem;
       margin-bottom: 0.5rem;
     }
-    
+
     .delivery-verification {
       display: flex;
       gap: 1rem;
       margin-top: 1rem;
     }
-    
+
     .btn-received {
       background-color: #10b981;
       color: white;
       flex: 1;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.3rem;
+      cursor: pointer;
+      font-weight: 600;
     }
-    
+
     .btn-not-received {
       background-color: #ef4444;
       color: white;
       flex: 1;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.3rem;
+      cursor: pointer;
+      font-weight: 600;
     }
-    
-    .review-form {
+
+    .btn-review {
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.3rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
       background: white;
+      padding: 2rem;
       border-radius: 0.5rem;
-      padding: 1.5rem;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .modal-title {
+      margin-bottom: 1.5rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
       margin-top: 1rem;
     }
-    
+
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 0.25rem;
+      font-size: 1rem;
+      resize: vertical;
+    }
+
     .hidden {
       display: none;
+    }
+
+    /* Inline toast message style */
+    .inline-message {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      z-index: 9999;
+      color: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      animation: fadeinout 3s ease forwards;
+    }
+
+    @keyframes fadeinout {
+      0% {
+        opacity: 0;
+        transform: translateY(-20%);
+      }
+      10%, 90% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-20%);
+      }
     }
   </style>
 </head>
@@ -124,7 +213,7 @@
         <div class="profile-card-header">
           <h2 class="section-title">Personal Information</h2>
         </div>
-        
+
         <div class="profile-info-grid">
           <div class="profile-info-item">
             <span class="profile-info-label">Username</span>
@@ -150,7 +239,7 @@
           <h2 class="section-title">Your Order History</h2>
           <p class="profile-card-subtitle">All your delicious adventures with us</p>
         </div>
-        
+
         {% if orders %}
         <div class="table-responsive">
           <table class="order-history-table">
@@ -160,16 +249,13 @@
                 <th>Date</th>
                 <th>Total</th>
                 <th>Status</th>
-                <th>Review</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {% for order in orders %}
               <tr>
-                <td>
-                  <span class="order-code-badge">{{ order.order_code }}</span>
-                </td>
+                <td><span class="order-code-badge">{{ order.order_code }}</span></td>
                 <td>{{ order.order_date.strftime('%b %d, %Y') }}</td>
                 <td class="text-bold">{{ order.total_price|format_currency }}</td>
                 <td>
@@ -181,16 +267,30 @@
                   </span>
                 </td>
                 <td>
-                  {% if order.status == 'completed' and order.review %}
-                    <div class="star-rating">
-                      {% for i in range(5) %}
-                        <span class="star {% if i < order.review.rating %}filled{% endif %}">★</span>
+                  {% if order.status in ['approved', 'processing'] %}
+                    <div class="delivery-verification">
+                      <button
+  class="btn btn-received"
+  onclick="updateOrderStatus('{{ order.order_id }}', 'received')"
+>
+  ✅ Received
+</button>
+<button
+  class="btn btn-not-received"
+  onclick="updateOrderStatus('{{ order.order_id }}', 'not_received')"
+>
+  ❌ Not Received
+</button>
+
+                  {% elif order.review_comment %}
+                    <div class="star-rating" aria-label="User rating">
+                      {% for i in range(1, 6) %}
+                      <span class="star {% if i <= order.rating %}filled{% endif %}">★</span>
                       {% endfor %}
                     </div>
+                  {% else %}
+                    <a href="{{ url_for('user_order_detail', order_id=order.order_id) }}" class="btn btn-sm btn-outline">View</a>
                   {% endif %}
-                </td>
-                <td>
-                  <a href="{{ url_for('user_order_detail', order_id=order.order_id) }}" class="btn btn-sm btn-outline">Details</a>
                 </td>
               </tr>
               {% endfor %}
@@ -206,12 +306,33 @@
         </div>
         {% endif %}
       </div>
+
+      <!-- Review Modal -->
+      <div id="reviewModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-content">
+          <h3 class="modal-title" id="modalTitle">Review Your Order</h3>
+          <form id="reviewForm">
+            <input type="hidden" id="reviewOrderId" />
+            <div class="star-rating" role="radiogroup" aria-label="Star rating">
+              {% for i in range(5, 0, -1) %}
+                <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" />
+                <label for="star{{ i }}">★</label>
+              {% endfor %}
+            </div>
+            <textarea id="reviewComment" placeholder="Share your experience..." required></textarea>
+            <div class="modal-actions">
+              <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+              <button type="submit" class="btn btn-primary">Submit Review</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </section>
   </main>
 
   <footer class="footer">
     <div class="container">
-      <p class="copyright">© 2025 Gourmet Bistro. All rights reserved.</p>
+      <p class="copyright">© 2025 ZENORA. All rights reserved.</p>
     </div>
   </footer>
 
@@ -237,5 +358,96 @@
   </div>
 
   <script src="/static/scripts.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      function showMessage(message, type = 'error') {
+        const toast = document.createElement('div');
+        toast.className = 'inline-message';
+        toast.style.backgroundColor = type === 'success' ? '#10b981' : '#ef4444';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+
+      window.updateOrderStatus = function (orderId, status) {
+        const endpoint =
+          status === 'received'
+            ? `/order/${orderId}/received`
+            : `/order/${orderId}/not-received`;
+
+        fetch(endpoint, { method: 'POST' })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === 'success') {
+              location.reload();
+            } else {
+              showMessage('Error updating order status');
+            }
+          })
+          .catch(() => showMessage('Network error, please try again.'));
+      };
+
+      window.openReviewModal = function (orderId) {
+        document.getElementById('reviewOrderId').value = orderId;
+        document.getElementById('reviewModal').classList.remove('hidden');
+      };
+
+      window.closeModal = function () {
+        document.getElementById('reviewModal').classList.add('hidden');
+      };
+
+      const reviewForm = document.getElementById('reviewForm');
+      reviewForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const selectedRating = document.querySelector(
+          'input[name="rating"]:checked'
+        );
+        const comment = document.getElementById('reviewComment').value.trim();
+        const orderId = document.getElementById('reviewOrderId').value;
+
+        if (!selectedRating) {
+          showMessage('Please select a star rating.');
+          return;
+        }
+
+        if (!comment) {
+          showMessage('Please write a review.');
+          return;
+        }
+
+        const reviewData = {
+          rating: selectedRating.value,
+          review: comment,
+        };
+
+        fetch(`/order/${orderId}/review`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(reviewData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === 'success') {
+              location.reload();
+            } else {
+              showMessage('Error submitting review');
+            }
+          })
+          .catch(() => showMessage('Network error, please try again.'));
+      });
+
+      // Star rating hover and selection effect
+      document.querySelectorAll('.star-rating input').forEach((input) => {
+        input.addEventListener('change', () => {
+          const rating = parseInt(input.value, 10);
+          const labels = document.querySelectorAll('.star-rating label');
+          labels.forEach((label, idx) => {
+            label.style.color = idx < rating ? '#ffc107' : '#ccc';
+          });
+        });
+      });
+    });
+  </script>
 </body>
 </html>

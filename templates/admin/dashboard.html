@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Dashboard - Gourmet Bistro</title>
+  <title>Admin Dashboard - ZENORA</title>
   <link rel="stylesheet" href="/static/styles.css" />
   <style>
     /* Dashboard Metrics */
@@ -148,6 +148,163 @@
     .status-completed { background-color: #d1fae5; color: #065f46; }
     .status-cancelled { background-color: #fee2e2; color: #991b1b; }
     .status-declined { background-color: #f3f4f6; color: #374151; }
+    
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      color: white;
+      background-color: #4f46e5;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transform: translateY(-100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1100;
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .toast.success {
+      background-color: #10b981;
+    }
+    
+    .toast.error {
+      background-color: #ef4444;
+    }
+
+    /* Utility classes */
+    .text-gray-500 { color: #6b7280; }
+    .text-sm { font-size: 0.875rem; }
+    .text-green-600 { color: #059669; }
+    .text-red-600 { color: #dc2626; }
+    .text-xl { font-size: 1.25rem; }
+    .font-bold { font-weight: 700; }
+    .flex { display: flex; }
+    .justify-between { justify-content: space-between; }
+    .items-center { align-items: center; }
+    .w-full { width: 100%; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mt-4 { margin-top: 1rem; }
+    .gap-2 { gap: 0.5rem; }
+    .justify-end { justify-content: flex-end; }
+
+    /* Button styles */
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background-color: #4f46e5;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #4338ca;
+    }
+    
+    .btn-outline {
+      border: 1px solid #d1d5db;
+      background-color: white;
+      color: #374151;
+    }
+    
+    .btn-outline:hover {
+      background-color: #f9fafb;
+    }
+    
+    .btn-danger {
+      background-color: #ef4444;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+
+    /* Form styles */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #374151;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    /* Card styles */
+    .card {
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      background-color: #f9fafb;
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    /* Table styles */
+    .table-responsive {
+      overflow-x: auto;
+    }
+    
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .admin-table th,
+    .admin-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .admin-table th {
+      background-color: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .admin-table tbody tr:hover {
+      background-color: #f9fafb;
+    }
   </style>
 </head>
 <body>
@@ -165,6 +322,9 @@
       </nav>
     </div>
   </header>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
 
   <section class="section">
     <div class="container">
@@ -214,6 +374,7 @@
         
         <div class="card-body">
           <div class="table-responsive">
+            <!-- Order Table -->
             <table class="admin-table w-full">
               <thead>
                 <tr>
@@ -238,15 +399,11 @@
                       {{ order.status|title }}
                     </span>
                   </td>
-                  <td>
-                    <span class="store-type-badge">
-                      {{ order.store_type|title }}
-                    </span>
-                  </td>
+                  <td>{{ order.store_type|title }}</td>
                   <td class="action-buttons">
                     <a href="{{ url_for('admin.admin_order_detail', order_id=order.order_id) }}" 
                        class="btn btn-sm btn-outline">
-                      View
+                      Manage
                     </a>
                     {% if order.status == 'pending' %}
                       <button class="btn btn-sm btn-primary btn-approve" 
@@ -257,17 +414,8 @@
                               data-order-id="{{ order.order_id }}">
                         Decline
                       </button>
-                    {% elif order.status == 'approved' %}
-                      <button class="btn btn-sm btn-secondary btn-process" 
-                              data-order-id="{{ order.order_id }}">
-                        Process
-                      </button>
                     {% endif %}
                   </td>
-                </tr>
-                {% else %}
-                <tr>
-                  <td colspan="7" class="text-center py-4 text-gray-500">No orders found</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -316,6 +464,17 @@
   </div>
 
   <script>
+    // Toast notification function
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast show ${type}`;
+      
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
+    }
+
     // Filter orders by status
     document.querySelectorAll('.status-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -371,6 +530,62 @@
       if (e.target.classList.contains('modal')) {
         e.target.style.display = 'none';
       }
+    });
+
+    // Handle form submissions with toast notifications
+    document.getElementById('approveForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      
+      fetch(this.action, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast(data.message || 'Order approved successfully!', 'success');
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          showToast(data.message || 'Error approving order', 'error');
+        }
+        modals.approve.style.display = 'none';
+      })
+      .catch(error => {
+        showToast('An error occurred', 'error');
+        console.error('Error:', error);
+        modals.approve.style.display = 'none';
+      });
+    });
+
+    document.getElementById('declineForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!this.decline_reason.value.trim()) {
+        showToast('Please provide a decline reason', 'error');
+        return;
+      }
+      
+      const formData = new FormData(this);
+      
+      fetch(this.action, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showToast(data.message || 'Order declined successfully!', 'success');
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          showToast(data.message || 'Error declining order', 'error');
+        }
+        modals.decline.style.display = 'none';
+      })
+      .catch(error => {
+        showToast('An error occurred', 'error');
+        console.error('Error:', error);
+        modals.decline.style.display = 'none';
+      });
     });
   </script>
 </body>

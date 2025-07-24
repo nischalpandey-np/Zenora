@@ -6,62 +6,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const totalElement = document.getElementById('total');
   const deliveryFee = 50;
 
-  // Handle Add/Remove button clicks for all buttons with class "add-to-cart"
+  // Add to Cart / Remove Button Click Handler
   document.querySelectorAll('.add-to-cart').forEach(button => {
     button.addEventListener('click', () => {
-      const itemName = button.getAttribute('data-item');
-      const itemPrice = parseFloat(button.getAttribute('data-price'));
-
-      // Find the quantity input corresponding to this item by name attribute
+      const itemName = button.dataset.item;
+      const itemPrice = parseFloat(button.dataset.price);
       const quantityInput = document.querySelector(`input[name="${itemName}"]`);
-      if (!quantityInput) {
-        console.error(`Quantity input not found for item: ${itemName}`);
-        return;
-      }
 
-      // Increment quantity by 1 on button click, or remove if already present
+      if (!quantityInput) return console.error(`No quantity input for ${itemName}`);
+
       let quantity = parseInt(quantityInput.value, 10) || 0;
-
-      if (quantity === 0) {
-        quantity = 1;
-      } else {
-        quantity += 1;
-      }
+      quantity = quantity === 0 ? 1 : quantity + 1;
       quantityInput.value = quantity;
 
       button.textContent = quantity > 0 ? 'Remove' : 'Add';
 
-      // Update cart data structure accordingly
       if (quantity > 0) {
         cart[itemName] = { name: itemName, price: itemPrice, quantity };
       } else {
         delete cart[itemName];
       }
-
       updateCartDisplay();
-    });
-  
-    // Listen for manual changes in quantity input fields
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-      input.addEventListener('input', (e) => {
-        const itemName = input.name;
-        const button = document.querySelector(`.add-to-cart[data-item="${itemName}"]`);
-        const itemPrice = parseFloat(button.getAttribute('data-price'));
-        let quantity = parseInt(input.value, 10) || 0;
-  
-        if (quantity > 0) {
-          cart[itemName] = { name: itemName, price: itemPrice, quantity };
-          if (button) button.textContent = 'Remove';
-        } else {
-          delete cart[itemName];
-          if (button) button.textContent = 'Add';
-        }
-        updateCartDisplay();
-      });
     });
   });
 
-  // Update the cart summary panel
+  // Manual Quantity Input Listener
+  document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('input', () => {
+      const itemName = input.name;
+      const button = document.querySelector(`.add-to-cart[data-item="${itemName}"]`);
+      const itemPrice = parseFloat(button?.dataset.price || 0);
+      const quantity = parseInt(input.value, 10) || 0;
+
+      if (quantity > 0) {
+        cart[itemName] = { name: itemName, price: itemPrice, quantity };
+        if (button) button.textContent = 'Remove';
+      } else {
+        delete cart[itemName];
+        if (button) button.textContent = 'Add';
+      }
+      updateCartDisplay();
+    });
+  });
+
   function updateCartDisplay() {
     cartItemsContainer.innerHTML = '';
     let totalItems = 0;
@@ -87,8 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     totalElement.textContent = `Nrs ${(subtotal + deliveryFee).toFixed(2)}`;
   }
 
-  // On form submit, add the cart data as a hidden input (JSON string) for backend processing
-  const form = document.querySelector('form.shopping-form, form#menu-form'); // matches both pages
+  const form = document.querySelector('form.shopping-form, form#menu-form');
   if (form) {
     form.addEventListener('submit', e => {
       if (Object.keys(cart).length === 0) {
@@ -96,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Please add at least one item to your order before submitting.');
         return;
       }
-      // Add or update hidden input with JSON string of cart items
+
       let hiddenInput = form.querySelector('input[name="items"]');
       if (!hiddenInput) {
         hiddenInput = document.createElement('input');
@@ -109,66 +95,63 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Rating + Review logic
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Star Rating Interaction
-  document.querySelectorAll('.star-rating').forEach(ratingContainer => {
-    const inputs = ratingContainer.querySelectorAll('input[type="radio"]');
-    
-    inputs.forEach(input => {
-      input.addEventListener('change', function() {
-        const selectedRating = this.value;
-        // You can store this value if needed
-      });
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.star-rating input[type="radio"]').forEach(input => {
+    input.addEventListener('change', () => {
+      const selectedRating = input.value;
+      console.log('Selected rating:', selectedRating);
     });
   });
 
-  // Review Form Submission
   const reviewForm = document.getElementById('review-form');
   if (reviewForm) {
-    reviewForm.addEventListener('submit', function(e) {
+    reviewForm.addEventListener('submit', function (e) {
       e.preventDefault();
-      
       const formData = new FormData(this);
       const reviewData = {
         order_id: formData.get('order_id'),
         rating: formData.get('rating'),
         comment: formData.get('comment')
       };
-      
+
       if (!reviewData.rating) {
         alert('Please select a rating');
         return;
       }
-      
+
       fetch('/submit_review', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(reviewData)
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showToast('Review submitted successfully!', 'success');
-          setTimeout(() => {
-            location.reload();
-          }, 1500);
-        } else {
-          showToast('Failed to submit review. Please try again.', 'error');
-        }
-      });
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showToast('Review submitted successfully!', 'success');
+            setTimeout(() => location.reload(), 1500);
+          } else {
+            showToast('Failed to submit review. Please try again.', 'error');
+          }
+        })
+        .catch(err => {
+          console.error('Review submit error:', err);
+          showToast('Something went wrong. Try again later.', 'error');
+        });
     });
   }
 
-  // Toast implementation
   function showToast(message, category) {
-    const toastContainer = document.querySelector('.toast-container') || document.createElement('div');
-    toastContainer.className = 'toast-container fixed top-4 right-4 z-50 space-y-2';
-    document.body.appendChild(toastContainer);
-    
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.className = 'toast-container fixed top-4 right-4 z-50 space-y-2';
+      document.body.appendChild(toastContainer);
+    }
+
     const toast = document.createElement('div');
     toast.className = `toast flex items-center p-4 rounded-lg shadow-lg text-white bg-${category === 'success' ? 'green' : 'red'}-500`;
     toast.innerHTML = `

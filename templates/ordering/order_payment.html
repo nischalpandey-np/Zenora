@@ -74,13 +74,7 @@
           <h3>Your Order:</h3>
           <ul>
             {% for item, quantity in items.items() %}
-              <li>{{ item }} - Qty: {{ quantity }} - Total: Nrs 
-                {% if store_type == 'clothing' %}
-                  {{ (CLOTHING_PRICES[item] * quantity) | round(2) }}
-                {% else %}
-                  {{ (ITEM_PRICES[item] * quantity) | round(2) }}
-                {% endif %}
-              </li>
+              <li>{{ item }} - Qty: {{ quantity }} - Total: Nrs {{ (item_prices[item] * quantity) | round(2) }}</li>
             {% endfor %}
           </ul>
           <p><strong>Subtotal: Nrs {{ subtotal | round(2) }}</strong></p>
@@ -89,7 +83,6 @@
 
         <form action="{{ url_for('select_payment') }}" method="post" class="payment-form">
           <div class="payment-options">
-
             <label class="payment-option disabled">
               <input type="radio" name="payment_method" value="card" id="card-payment" disabled>
               <div class="payment-option-content">
@@ -97,6 +90,7 @@
                 <img src="/static/card.png" alt="Card" class="payment-icon">
               </div>
             </label>
+
             <div class="payment-notice show">
               Credit/Debit Card payments are not available in your country. Please select Cash on Delivery.
             </div>
@@ -120,7 +114,7 @@
 
   <footer class="footer">
     <div class="container">
-      <p class="copyright">© 2025 Gourmet Bistro. All rights reserved.</p>
+      <p class="copyright">© 2025 ZENORA. All rights reserved.</p>
     </div>
   </footer>
 

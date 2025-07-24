@@ -110,7 +110,7 @@ def inject_cart_count():
         try:
             items = json.loads(session['items'])
             cart_count = sum(items.values())
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, TypeError):
             session.pop('items', None)
     return {'cart_count': cart_count}
 
@@ -138,10 +138,15 @@ def digibistro():
 def view_menu():
     """Handle restaurant menu viewing and item selection."""
     if request.method == 'POST':
-        items = {
-            item: int(request.form.get(item, 0))
-            for item in ITEM_PRICES if int(request.form.get(item, 0)) > 0
-        }
+        items = {}
+        for item in ITEM_PRICES:
+            try:
+                qty = int(request.form.get(item, 0))
+                if qty > 0:
+                    items[item] = qty
+            except ValueError:
+                continue
+
         if not items:
             flash("Please select at least one item!", "error")
             return redirect(url_for('view_menu'))
@@ -166,10 +171,15 @@ def clothstore():
 def view_clothing():
     """Handle clothing menu viewing and item selection."""
     if request.method == 'POST':
-        items = {
-            item: int(request.form.get(item, 0))
-            for item in CLOTHING_PRICES if int(request.form.get(item, 0)) > 0
-        }
+        items = {}
+        for item in CLOTHING_PRICES:
+            try:
+                qty = int(request.form.get(item, 0))
+                if qty > 0:
+                    items[item] = qty
+            except ValueError:
+                continue
+
         if not items:
             flash("Please select at least one item!", "error")
             return redirect(url_for('view_clothing'))
@@ -207,7 +217,7 @@ def select_payment():
 
     try:
         items = json.loads(session['items'])
-    except json.JSONDecodeError:
+    except (json.JSONDecodeError, TypeError):
         session.pop('items', None)
         flash("Invalid cart data. Please try again.", "error")
         return redirect(url_for('index'))
@@ -215,14 +225,14 @@ def select_payment():
     store_type = session.get('store_type', 'restaurant')
     price_list = CLOTHING_PRICES if store_type == 'clothing' else ITEM_PRICES
 
-    subtotal = sum(price_list[item] * qty for item, qty in items.items())
+    subtotal = sum(price_list.get(item, 0) * qty for item, qty in items.items())
 
     return render_template('ordering/order_payment.html',
-                         items=items,
-                         subtotal=subtotal,
-                         delivery_fee=DELIVERY_FEE,
-                         item_prices=price_list,
-                         store_type=store_type)
+                           items=items,
+                           subtotal=subtotal,
+                           delivery_fee=DELIVERY_FEE,
+                           item_prices=price_list,
+                           store_type=store_type)
 
 @app.route('/order-details', methods=['GET', 'POST'])
 @login_required
@@ -233,15 +243,15 @@ def order_details():
         return redirect(url_for('index'))
 
     if request.method == 'POST':
-        required = ['customer-name', 'phone-number', 'customer-address']
-        if not all(field in request.form for field in required):
+        required_fields = ['customer-name', 'phone-number', 'customer-address']
+        if not all(field in request.form and request.form[field].strip() for field in required_fields):
             flash("Please fill in all required fields.", "error")
             return redirect(url_for('order_details'))
 
         customer_name = request.form['customer-name'].strip()
         phone_number = request.form['phone-number'].strip()
         customer_address = request.form['customer-address'].strip()
-        house_no = request.form.get('house-no', '').strip()
+        house_no = request.form.get('house-no', '').strip() or 'N/A'
 
         # Validate phone number
         if not validate_phone_number(phone_number):
@@ -250,7 +260,7 @@ def order_details():
 
         try:
             items = json.loads(session['items'])
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, TypeError):
             session.pop('items', None)
             flash("Invalid order data.", "error")
             return redirect(url_for('index'))
@@ -286,45 +296,49 @@ def order_details():
             flash("Order failed. Please try again.", "error")
             return redirect(url_for('index'))
 
-        # Clear session data
+        # Clear session data related to order
         session.pop('items', None)
         session.pop('payment_method', None)
         session.pop('store_type', None)
 
         return render_template('ordering/order_summary.html',
-                             customer_name=customer_name,
-                             customer_address=customer_address,
-                             house_no=house_no or 'N/A',
-                             phone_number=phone_number,
-                             order_details=order_details,
-                             subtotal=subtotal,
-                             total_price=total_price,
-                             payment_method='Cash on Delivery',
-                             order_code=order_code,
-                             delivery_fee=delivery_fee,
-                             store_type=store_type)
+                               customer_name=customer_name,
+                               customer_address=customer_address,
+                               house_no=house_no,
+                               phone_number=phone_number,
+                               order_details=order_details,
+                               subtotal=subtotal,
+                               total_price=total_price,
+                               payment_method='Cash on Delivery',
+                               order_code=order_code,
+                               delivery_fee=delivery_fee,
+                               store_type=store_type)
 
     return render_template('ordering/order.html')
 
-# -------------------------
-# User Profile
-# -------------------------
+# ======================
+# User Profile & Orders
+# ======================
 
 @app.route('/profile')
 @login_required
 def user_profile():
-    """Display user profile with order history."""
+    """Display user profile with enhanced order tracking."""
     user_id = session['user_id']
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
+    # Get user info
     cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
     user = cursor.fetchone()
 
+    # Get recent orders with reviews
     cursor.execute("""
-        SELECT * FROM orders 
-        WHERE user_id = %s 
-        ORDER BY order_date DESC
+        SELECT o.*, r.rating, r.comment AS review_comment
+        FROM orders o
+        LEFT JOIN reviews r ON o.order_id = r.order_id
+        WHERE o.user_id = %s
+        ORDER BY o.order_date DESC
         LIMIT 10
     """, (user_id,))
     orders = cursor.fetchall()
@@ -334,30 +348,50 @@ def user_profile():
 
     return render_template('auth/profile.html', user=user, orders=orders)
 
+# ======================
+# Order Status Updates (User side)
+# ======================
+
+
+
+# Add this to app.py
+@app.context_processor
+def utility_processor():
+    def format_currency(value):
+        return f"Nrs: {value:,.2f}"
+    return {'format_currency': format_currency}
+
 @app.route('/order/<int:order_id>/received', methods=['POST'])
 @login_required
 def mark_order_received(order_id):
     """Mark an order as received by the user."""
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    
-    # Verify the order belongs to the user
-    cursor.execute("SELECT user_id FROM orders WHERE order_id = %s", (order_id,))
+
+    cursor.execute("SELECT user_id, status FROM orders WHERE order_id = %s", (order_id,))
     order = cursor.fetchone()
-    
+
     if not order or order['user_id'] != session['user_id']:
+        cursor.close()
+        conn.close()
         return jsonify({'error': 'Unauthorized'}), 403
-    
+
+    if order['status'] not in ['approved', 'processing']:
+        cursor.close()
+        conn.close()
+        return jsonify({'error': 'Invalid order status'}), 400
+
     cursor.execute("""
-        UPDATE orders 
-        SET received_status = 'received'
+        UPDATE orders
+        SET received_status = 'received',
+            status = 'completed'
         WHERE order_id = %s
     """, (order_id,))
-    
     conn.commit()
+
     cursor.close()
     conn.close()
-    
+
     return jsonify({'status': 'success'})
 
 @app.route('/order/<int:order_id>/not-received', methods=['POST'])
@@ -366,63 +400,89 @@ def mark_order_not_received(order_id):
     """Mark an order as not received by the user."""
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    
-    # Verify the order belongs to the user
-    cursor.execute("SELECT user_id FROM orders WHERE order_id = %s", (order_id,))
+
+    cursor.execute("SELECT user_id, status FROM orders WHERE order_id = %s", (order_id,))
     order = cursor.fetchone()
-    
+
     if not order or order['user_id'] != session['user_id']:
+        cursor.close()
+        conn.close()
         return jsonify({'error': 'Unauthorized'}), 403
-    
+
+    if order['status'] not in ['approved', 'processing']:
+        cursor.close()
+        conn.close()
+        return jsonify({'error': 'Invalid order status'}), 400
+
     cursor.execute("""
-        UPDATE orders 
+        UPDATE orders
         SET received_status = 'not_received',
             status = 'cancelled'
         WHERE order_id = %s
     """, (order_id,))
-    
     conn.commit()
+
     cursor.close()
     conn.close()
-    
+
     return jsonify({'status': 'success'})
+
+# ======================
+# Review Submission
+# ======================
 
 @app.route('/order/<int:order_id>/review', methods=['POST'])
 @login_required
 def submit_review(order_id):
-    """Submit a review for a received order."""
-    data = request.get_json()
+    """Submit a review for a completed order."""
+    data = request.get_json(force=True)
+
     rating = data.get('rating')
     review = data.get('review')
-    
-    if not rating or not review:
+
+    if rating is None or review is None:
         return jsonify({'error': 'Rating and review are required'}), 400
-    
+
+    try:
+        rating_int = int(rating)
+        if rating_int < 1 or rating_int > 5:
+            raise ValueError
+    except (ValueError, TypeError):
+        return jsonify({'error': 'Invalid rating value'}), 400
+
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-    
-    # Verify the order belongs to the user and was received
+
     cursor.execute("""
-        SELECT user_id, received_status 
-        FROM orders 
+        SELECT user_id, status, received_status
+        FROM orders
         WHERE order_id = %s
     """, (order_id,))
     order = cursor.fetchone()
-    
-    if not order or order['user_id'] != session['user_id'] or order['received_status'] != 'received':
-        return jsonify({'error': 'Unauthorized'}), 403
-    
-    # Store the review in the database
+
+    if not order or order['user_id'] != session['user_id'] or order['status'] != 'completed' or order['received_status'] != 'received':
+        cursor.close()
+        conn.close()
+        return jsonify({'error': 'Unauthorized or invalid order status'}), 403
+
+    # Insert or update review
     cursor.execute("""
         INSERT INTO reviews (order_id, user_id, rating, comment)
         VALUES (%s, %s, %s, %s)
-    """, (order_id, session['user_id'], rating, review))
+        ON DUPLICATE KEY UPDATE
+            rating = VALUES(rating),
+            comment = VALUES(comment)
+    """, (order_id, session['user_id'], rating_int, review))
     conn.commit()
-    
+
     cursor.close()
     conn.close()
-    
+
     return jsonify({'status': 'success'})
+
+# ======================
+# User Order Detail View
+# ======================
 
 @app.route('/profile/order/<int:order_id>')
 @login_required
@@ -433,9 +493,9 @@ def user_order_detail(order_id):
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("""
-        SELECT o.*, 
-               GROUP_CONCAT(oi.item_name SEPARATOR ', ') as items,
-               SUM(oi.quantity) as total_items
+        SELECT o.*,
+               GROUP_CONCAT(oi.item_name SEPARATOR ', ') AS items,
+               SUM(oi.quantity) AS total_items
         FROM orders o
         LEFT JOIN order_items oi ON o.order_id = oi.order_id
         WHERE o.order_id = %s AND o.user_id = %s
@@ -445,6 +505,8 @@ def user_order_detail(order_id):
 
     if not order:
         flash("Order not found.", "error")
+        cursor.close()
+        conn.close()
         return redirect(url_for('user_profile'))
 
     cursor.execute("SELECT * FROM order_items WHERE order_id = %s", (order_id,))
@@ -456,18 +518,17 @@ def user_order_detail(order_id):
     return render_template('ordering/order_detail.html', order=order, items=items)
 
 # -------------------------
-# Error Handlers
+# Error Handlers (Optional)
 # -------------------------
+# Uncomment and customize these if you want custom error pages
 
-@app.errorhandler(404)
-def page_not_found(e):
-    """Handle 404 errors."""
-    return render_template('errors/404.html'), 404
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     return render_template('errors/404.html'), 404
 
-@app.errorhandler(500)
-def internal_server_error(e):
-    """Handle 500 errors."""
-    return render_template('errors/500.html'), 500
+# @app.errorhandler(500)
+# def internal_server_error(e):
+#     return render_template('errors/500.html'), 500
 
 # -------------------------
 # App Runner

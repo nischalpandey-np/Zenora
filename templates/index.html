@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Welcome - Choose Your Experience | ZENORA</title>
+  <title> HOME| ZENORA</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.0.6/tsparticles.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -500,46 +500,98 @@
     </div>
   </section>
 
- 
-  <!-- Newsletter Section -->
+  <!-- Contact Us Section -->
   <section class="py-20 bg-gradient-to-r from-indigo-600 to-purple-700 text-white">
     <div class="container mx-auto px-6 max-w-5xl">
       <div class="flex flex-col lg:flex-row items-center justify-between gap-10">
         <div class="lg:w-1/2 text-center lg:text-left">
           <h2 class="text-3xl md:text-4xl font-extrabold mb-6" data-aos="fade-right">
-            Join the ZENORA Community
+            Contact ZENORA
           </h2>
           <p class="text-xl opacity-90 mb-8" data-aos="fade-right" data-aos-delay="100">
-            Email us to know more about us or join us to collaborate with us.
+            Have questions, feedback, or partnership inquiries? We'd love to hear from you!
           </p>
-          <div class="flex space-x-4 justify-center lg:justify-start">
-            <a href="#" class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
-              <i class="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a href="#" class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
-              <i class="fab fa-twitter"></i>
-            </a>
-            <a href="#" class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center hover:bg-opacity-30 transition">
-              <i class="fab fa-pinterest"></i>
-            </a>
+          <div class="space-y-4">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg">Our Location</h4>
+                <p>4NO Jagritinagar, Tilottama 08, Nepal</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg">Call Us</h4>
+                <p>+977 9766305007</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-full bg-white bg-opacity-20 flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg">Email Us</h4>
+                <p>info.officialzenora@gmail.com</p>
+              </div>
+            </div>
           </div>
         </div>
         
         <div class="lg:w-1/2 w-full max-w-md">
           <div class="bg-white bg-opacity-10 backdrop-blur-lg rounded-2xl p-8" data-aos="zoom-in">
-            <form class="newsletter-form">
-              <div class="mb-6">
-                <label class="block text-white text-lg font-medium mb-2">Your Email</label>
-                <input type="email" class="w-full px-6 py-4 rounded-2xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50" placeholder="info.officialzenora.com">
+            <h3 class="text-2xl font-bold text-white mb-6 text-center">Send Us a Message</h3>
+            <form id="contactForm" action="https://formsubmit.co/a29691b7a35f2e7fa5ddc458e3f82405" method="POST" class="contact-form" enctype="multipart/form-data">
+              <input type="hidden" name="_next" value="https://nischalp.com.np">
+              <input type="hidden" name="_captcha" value="false">
+              <input type="hidden" name="_template" value="table">
+              <input type="text" name="_honey" style="display:none">
+              
+              <div class="grid grid-cols-1 gap-6 mb-6">
+                <div>
+                  <label class="block text-white text-sm font-medium mb-2">Your Name</label>
+                  <input type="text" id="name" name="name" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50" placeholder="John Doe" required>
+                </div>
+                
+                <div>
+                  <label class="block text-white text-sm font-medium mb-2">Email Address</label>
+                  <input type="email" id="email" name="email" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50" placeholder="you@example.com" required>
+                </div>
+                
+                <div>
+                  <label class="block text-white text-sm font-medium mb-2">Subject</label>
+                  <input type="text" id="subject" name="subject" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50" placeholder="How can we help?" required>
+                </div>
+                
+                <div>
+                  <label class="block text-white text-sm font-medium mb-2">Message</label>
+                  <textarea id="message" name="message" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50" placeholder="Your message here..." rows="4" required></textarea>
+                </div>
+                
+                <div>
+                  <label class="block text-white text-sm font-medium mb-2">Attachment</label>
+                  <div class="relative">
+                    <label class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white flex items-center cursor-pointer hover:bg-opacity-20 transition">
+                      <i class="fas fa-paperclip mr-2 text-white text-opacity-80"></i>
+                      <span id="file-name" class="text-sm text-white text-opacity-80">Attach file (optional)</span>
+                      <input type="file" id="attachment" name="attachment" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                    </label>
+                    <div id="file-preview" class="mt-2 text-white text-xs"></div>
+                    <p class="mt-1 text-white text-opacity-60 text-xs">Supported formats: PDF, DOC, JPG, PNG (Max 5MB)</p>
+                  </div>
+                </div>
               </div>
-              <button type="submit" class="btn-gradient w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 px-6 rounded-2xl text-lg font-semibold shadow-lg hover:from-pink-600 hover:to-pink-700 transition">
+              
+              <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-[1.02]">
                 Send Message
               </button>
-              <p class="text-center mt-4 text-white text-opacity-70 text-sm">
-                We respect your privacy. Unsubscribe at any time.
+              
+              <p class="text-center mt-4 text-white text-opacity-70 text-xs">
+                We'll respond to your message within 24 hours.
               </p>
             </form>
           </div>
@@ -562,10 +614,10 @@
               <i class="fab fa-facebook-f"></i>
             </a>
             <a href="#" class="text-gray-400 hover:text-white transition">
-              <i class="fab fa-twitter"></i>
+              <i class="fab fa-instagram"></i>
             </a>
             <a href="#" class="text-gray-400 hover:text-white transition">
-              <i class="fab fa-instagram"></i>
+              <i class="fab fa-github"></i>
             </a>
             <a href="#" class="text-gray-400 hover:text-white transition">
               <i class="fab fa-linkedin-in"></i>
@@ -600,7 +652,7 @@
           <ul class="space-y-4">
             <li class="flex items-start gap-3">
               <i class="fas fa-map-marker-alt mt-1"></i>
-              <span> 4NO Jagritinagar, Tilottama 08, Nepal</span>
+              <span>4NO Jagritinagar, Tilottama 08, Nepal</span>
             </li>
             <li class="flex items-center gap-3">
               <i class="fas fa-phone"></i>
@@ -764,6 +816,20 @@
           card.querySelector('.splash-inner').style.transform = 
             'rotateY(0deg) rotateX(0deg) scale(1)';
         });
+      });
+
+      // File input display
+      const fileInput = document.getElementById('attachment');
+      const fileNameDisplay = document.getElementById('file-name');
+      
+      fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+          fileNameDisplay.textContent = this.files[0].name;
+          fileNameDisplay.classList.remove('text-opacity-80');
+        } else {
+          fileNameDisplay.textContent = 'Attach file (optional)';
+          fileNameDisplay.classList.add('text-opacity-80');
+        }
       });
     });
   </script>
