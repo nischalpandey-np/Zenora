@@ -54,61 +54,61 @@
       <form method="POST" class="shopping-form">
         <div class="item-grid">
           {% for item in [
-            {"name": "T-Shirt", "emoji": "👕", "price": "800.00", "desc": "Comfortable cotton t-shirt available in various colors and sizes.", "class": "tshirt-bg"},
-            {"name": "Jeans", "emoji": "👖", "price": "1500.00", "desc": "Premium denim jeans with perfect fit and style.", "class": "jeans-bg"},
-            {"name": "Dress", "emoji": "👗", "price": "2000.00", "desc": "Elegant dress perfect for any occasion and event.", "class": "dress-bg"},
-            {"name": "Jacket", "emoji": "🧥", "price": "2500.00", "desc": "Stylish jacket to keep you warm and fashionable.", "class": "jacket-bg"},
-            {"name": "Sneakers", "emoji": "👟", "price": "3000.00", "desc": "Comfortable sneakers for everyday wear and sports.", "class": "sneakers-bg"},
-            {"name": "Cap", "emoji": "🧢", "price": "400.00", "desc": "Trendy cap to complete your casual outfit.", "class": "cap-bg"},
-            {"name": "Hoodie", "emoji": "🤵", "price": "1800.00", "desc": "Cozy hoodie perfect for casual and relaxed wear.", "class": "hoodie-bg"},
-            {"name": "Shorts", "emoji": "🩳", "price": "600.00", "desc": "Comfortable shorts ideal for summer and sports.", "class": "shorts-bg"}
+            {"name": "T-Shirt", "emoji": "👕", "price": "800.00", "desc": "Comfortable cotton t-shirt available in various colors and sizes.", "class": "tshirt-bg", "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+            {"name": "Jeans", "emoji": "👖", "price": "1500.00", "desc": "Premium denim jeans with perfect fit and style.", "class": "jeans-bg", "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+            {"name": "Dress", "emoji": "👗", "price": "2000.00", "desc": "Elegant dress perfect for any occasion and event.", "class": "dress-bg", "image": "https://images.unsplash.com/photo-1539008835657-9e8e9680e956?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+            {"name": "Jacket", "emoji": "🧥", "price": "2500.00", "desc": "Stylish jacket to keep you warm and fashionable.", "class": "jacket-bg", "image": "https://images.unsplash.com/photo-1551028719-00167b16eac5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+            {"name": "Sneakers", "emoji": "👟", "price": "3000.00", "desc": "Comfortable sneakers for everyday wear and sports.", "class": "sneakers-bg", "image": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+            {"name": "Cap", "emoji": "🧢", "price": "400.00", "desc": "Trendy cap to complete your casual outfit.", "class": "cap-bg", "image": "https://images.unsplash.com/photo-1521369909029-2afed882baee?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+            {"name": "Hoodie", "emoji": "🤵", "price": "1800.00", "desc": "Cozy hoodie perfect for casual and relaxed wear.", "class": "hoodie-bg", "image": "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+            {"name": "Shorts", "emoji": "🩳", "price": "600.00", "desc": "Comfortable shorts ideal for summer and sports.", "class": "shorts-bg", "image": "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"}
           ] %}
           <div class="item-card">
-            <div class="item-image-container {{ item.class }}">
+            <div class="item-image-container {{ item.class }}" style="background-image: url('{{ item.image }}')">
               <div class="item-emoji">{{ item.emoji }}</div>
             </div>
             <div class="item-content">
               <h3 class="item-title">{{ item.name }}</h3>
               <p class="item-description">{{ item.desc }}</p>
               <div class="item-footer">
-  <span class="item-price">Nrs {{ item.price }}</span>
-  <div class="quantity-selector">
-    <input type="number" id="{{ item.name }}" name="{{ item.name }}" min="0" max="10" value="0" class="quantity-input">
-    <button type="button" class="add-to-cart" data-item="{{ item.name }}" data-price="{{ item.price }}">Add</button>
-  </div>
-</div>
+                <span class="item-price">Nrs {{ item.price }}</span>
+                <div class="quantity-selector">
+                  <input type="number" id="{{ item.name }}" name="{{ item.name }}" min="0" max="10" value="0" class="quantity-input">
+                  <button type="button" class="add-to-cart" data-item="{{ item.name }}" data-price="{{ item.price }}">Add</button>
+                </div>
+              </div>
             </div>
           </div>
           {% endfor %}
         </div>
 
-<div class="order-summary">
-  <div class="order-code">
-    YOUR ORDER
-  </div>
-  <div class="order-details">
-    <div class="cart-items" id="cart-items">
-      <!-- Cart items will be added here dynamically -->
-    </div>
-    <div class="order-row">
-      <span class="label">Items Selected:</span>
-      <span class="value" id="items-count">0</span>
-    </div>
-    <div class="order-row">
-      <span class="label">Subtotal:</span>
-      <span class="value" id="subtotal">Nrs 0.00</span>
-    </div>
-    <div class="order-row">
-      <span class="label">Delivery Fee:</span>
-      <span class="value">Nrs 50.00</span>
-    </div>
-    <div class="order-row">
-      <span class="label">Total:</span>
-      <span class="value order-total" id="total">Nrs 50.00</span>
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary btn-block btn-lg">Place Order</button>
-</div>
+        <div class="order-summary">
+          <div class="order-code">
+            YOUR ORDER
+          </div>
+          <div class="order-details">
+            <div class="cart-items" id="cart-items">
+              <!-- Cart items will be added here dynamically -->
+            </div>
+            <div class="order-row">
+              <span class="label">Items Selected:</span>
+              <span class="value" id="items-count">0</span>
+            </div>
+            <div class="order-row">
+              <span class="label">Subtotal:</span>
+              <span class="value" id="subtotal">Nrs 0.00</span>
+            </div>
+            <div class="order-row">
+              <span class="label">Delivery Fee:</span>
+              <span class="value">Nrs 50.00</span>
+            </div>
+            <div class="order-row">
+              <span class="label">Total:</span>
+              <span class="value order-total" id="total">Nrs 50.00</span>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">Place Order</button>
+        </div>
       </form>
     </section>
   </main>
