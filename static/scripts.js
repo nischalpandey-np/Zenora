@@ -104,70 +104,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Rating + Review logic
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.star-rating input[type="radio"]').forEach(input => {
-    input.addEventListener('change', () => {
-      const selectedRating = input.value;
-      console.log('Selected rating:', selectedRating);
+// Mobile Menu Functionality
+document.addEventListener('DOMContentLoaded', function() {
+  // Mobile menu elements
+  const overlay = document.querySelector('.overlay');
+  const mobileMenu = document.querySelector('.mobile-menu');
+  const mobileMenuToggles = document.querySelectorAll('.mobile-menu-toggle');
+  
+  // Toggle mobile menu
+  mobileMenuToggles.forEach(toggle => {
+    toggle.addEventListener('click', function() {
+      mobileMenu.classList.toggle('active');
+      overlay.classList.toggle('active');
+      
+      // Prevent scrolling when menu is open
+      document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
     });
   });
-
-  const reviewForm = document.getElementById('review-form');
-  if (reviewForm) {
-    reviewForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      const reviewData = {
-        order_id: formData.get('order_id'),
-        rating: formData.get('rating'),
-        comment: formData.get('comment')
-      };
-
-      if (!reviewData.rating) {
-        alert('Please select a rating');
-        return;
-      }
-
-      fetch('/submit_review', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(reviewData)
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            showToast('Review submitted successfully!', 'success');
-            setTimeout(() => location.reload(), 1500);
-          } else {
-            showToast('Failed to submit review. Please try again.', 'error');
-          }
-        })
-        .catch(err => {
-          console.error('Review submit error:', err);
-          showToast('Something went wrong. Try again later.', 'error');
-        });
+  
+  // Close menu when clicking overlay
+  overlay.addEventListener('click', function() {
+    mobileMenu.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  });
+  
+  // Close menu when clicking a link (optional)
+  const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+  mobileNavLinks.forEach(link => {
+    link.addEventListener('click', function() {
+      mobileMenu.classList.remove('active');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
     });
-  }
-
-  function showToast(message, category) {
-    let toastContainer = document.querySelector('.toast-container');
-    if (!toastContainer) {
-      toastContainer = document.createElement('div');
-      toastContainer.className = 'toast-container fixed top-4 right-4 z-50 space-y-2';
-      document.body.appendChild(toastContainer);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast flex items-center p-4 rounded-lg shadow-lg text-white bg-${category === 'success' ? 'green' : 'red'}-500`;
-    toast.innerHTML = `
-      <span class="mr-2">${category === 'success' ? '✓' : '⚠️'}</span>
-      ${message}
-      <button class="ml-4" onclick="this.parentElement.remove()">×</button>
-    `;
-    toastContainer.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
-  }
+  });
 });

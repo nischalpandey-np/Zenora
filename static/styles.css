@@ -1026,6 +1026,9 @@ p {
 /* ============================================= */
 /* ============= 15. MOBILE MENU =============== */
 /* ============================================= */
+/* ============================================= */
+/* ============= 15. MOBILE MENU =============== */
+/* ============================================= */
 
 .overlay {
   position: fixed;
@@ -1034,7 +1037,7 @@ p {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 90;
+  z-index: 990;
   opacity: 0;
   visibility: hidden;
   transition: var(--transition);
@@ -1048,15 +1051,17 @@ p {
   max-width: 320px;
   height: 100%;
   background-color: var(--white);
-  z-index: 100;
+  z-index: 1000;
   transition: var(--transition);
   overflow-y: auto;
+  box-shadow: var(--shadow-xl);
 }
 
 .mobile-menu-header {
   padding: var(--space-md);
   display: flex;
   justify-content: flex-end;
+  border-bottom: 1px solid var(--gray-light);
 }
 
 .mobile-nav-menu {
@@ -1065,12 +1070,14 @@ p {
 
 .mobile-nav-link {
   display: block;
-  padding: var(--space-sm) 0;
+  padding: var(--space-md) 0;
   font-weight: 500;
   color: var(--dark);
   border-bottom: 1px solid var(--gray-light);
+  transition: var(--transition);
 }
 
+.mobile-nav-link:hover,
 .mobile-nav-link.active {
   color: var(--primary);
 }
@@ -1085,7 +1092,10 @@ p {
   visibility: visible;
 }
 
-
+/* Ensure header is above overlay but below mobile menu */
+.header {
+  z-index: 995;
+}
 /* ============================================= */
 /* ====== 16. BACKGROUNDS & GRADIENTS ========== */
 /* ============================================= */
