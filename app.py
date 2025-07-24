@@ -131,6 +131,7 @@ def index():
 @app.route('/digibistro')
 def digibistro():
     """Render the digital bistro landing page."""
+    session['store_origin'] = 'restaurant'  # Store origin in session
     return render_template('gourmetbistro/digibistro.html', menu_items=ITEM_PRICES)
 
 @app.route('/restaurant/menu', methods=['GET', 'POST'])
@@ -164,6 +165,7 @@ def view_menu():
 @app.route('/clothstore')
 def clothstore():
     """Render the clothing store landing page."""
+    session['store_origin'] = 'clothing'  # Store origin in session
     return render_template('cloth/clothstore.html', clothing_items=CLOTHING_PRICES)
 
 @app.route('/clothing/menu', methods=['GET', 'POST'])
@@ -352,9 +354,6 @@ def user_profile():
 # Order Status Updates (User side)
 # ======================
 
-
-
-# Add this to app.py
 @app.context_processor
 def utility_processor():
     def format_currency(value):

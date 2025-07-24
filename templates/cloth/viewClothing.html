@@ -7,6 +7,34 @@
   <link rel="stylesheet" href="/static/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+      <style>
+        .item-image-container {
+          height: 200px;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        .item-image-container .item-emoji {
+          font-size: 3rem;
+          z-index: 2;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .item-image-container::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+         
+        }
+      </style>
 </head>
 <body>
   <header class="header">
@@ -52,35 +80,36 @@
       </div>
 
       <form method="POST" class="shopping-form">
-        <div class="item-grid">
-          {% for item in [
-            {"name": "T-Shirt", "emoji": "👕", "price": "800.00", "desc": "Comfortable cotton t-shirt available in various colors and sizes.", "class": "tshirt-bg", "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
-            {"name": "Jeans", "emoji": "👖", "price": "1500.00", "desc": "Premium denim jeans with perfect fit and style.", "class": "jeans-bg", "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
-            {"name": "Dress", "emoji": "👗", "price": "2000.00", "desc": "Elegant dress perfect for any occasion and event.", "class": "dress-bg", "image": "https://images.unsplash.com/photo-1539008835657-9e8e9680e956?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
-            {"name": "Jacket", "emoji": "🧥", "price": "2500.00", "desc": "Stylish jacket to keep you warm and fashionable.", "class": "jacket-bg", "image": "https://images.unsplash.com/photo-1551028719-00167b16eac5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
-            {"name": "Sneakers", "emoji": "👟", "price": "3000.00", "desc": "Comfortable sneakers for everyday wear and sports.", "class": "sneakers-bg", "image": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
-            {"name": "Cap", "emoji": "🧢", "price": "400.00", "desc": "Trendy cap to complete your casual outfit.", "class": "cap-bg", "image": "https://images.unsplash.com/photo-1521369909029-2afed882baee?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
-            {"name": "Hoodie", "emoji": "🤵", "price": "1800.00", "desc": "Cozy hoodie perfect for casual and relaxed wear.", "class": "hoodie-bg", "image": "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
-            {"name": "Shorts", "emoji": "🩳", "price": "600.00", "desc": "Comfortable shorts ideal for summer and sports.", "class": "shorts-bg", "image": "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"}
-          ] %}
-          <div class="item-card">
-            <div class="item-image-container {{ item.class }}" style="background-image: url('{{ item.image }}')">
-              <div class="item-emoji">{{ item.emoji }}</div>
-            </div>
-            <div class="item-content">
-              <h3 class="item-title">{{ item.name }}</h3>
-              <p class="item-description">{{ item.desc }}</p>
-              <div class="item-footer">
-                <span class="item-price">Nrs {{ item.price }}</span>
-                <div class="quantity-selector">
-                  <input type="number" id="{{ item.name }}" name="{{ item.name }}" min="0" max="10" value="0" class="quantity-input">
-                  <button type="button" class="add-to-cart" data-item="{{ item.name }}" data-price="{{ item.price }}">Add</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
+        
+<div class="item-grid">
+  {% for item in [
+    {"name": "T-Shirt", "emoji": "👕", "price": "800.00", "desc": "Comfortable cotton t-shirt available in various colors and sizes.", "class": "tshirt-bg", "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+    {"name": "Jeans", "emoji": "👖", "price": "1500.00", "desc": "Premium denim jeans with perfect fit and style.", "class": "jeans-bg", "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+    {"name": "Skirt", "emoji": "👗", "price": "2000.00", "desc": "Elegant dress perfect for any occasion and event.", "class": "dress-bg", "image": "https://images.unsplash.com/photo-1534445418105-b161f1aca589?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzF8fHNraXJ0fGVufDB8fDB8fHww"},
+    {"name": "Jacket", "emoji": "🧥", "price": "2500.00", "desc": "Stylish jacket to keep you warm and fashionable.", "class": "jacket-bg", "image": "https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8amFja2V0fGVufDB8fDB8fHww"},
+    {"name": "Sneakers", "emoji": "👟", "price": "3000.00", "desc": "Comfortable sneakers for everyday wear and sports.", "class": "sneakers-bg", "image": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+    {"name": "Cap", "emoji": "🧢", "price": "400.00", "desc": "Trendy cap to complete your casual outfit.", "class": "cap-bg", "image": "https://images.unsplash.com/photo-1521369909029-2afed882baee?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"},
+    {"name": "Hoodie", "emoji": "🤵", "price": "1800.00", "desc": "Cozy hoodie perfect for casual and relaxed wear.", "class": "hoodie-bg", "image": "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG9vZGllfGVufDB8fDB8fHww"},
+    {"name": "Shorts", "emoji": "🩳", "price": "600.00", "desc": "Comfortable shorts ideal for summer and sports.", "class": "shorts-bg", "image": "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvcnRzfGVufDB8fDB8fHww"}
+  ] %}
+  <div class="item-card">
+    <div class="item-image-container {{ item.class }} bg-cover bg-center" style="background-image: url('{{ item.image }}')">
+      <div class="item-emoji">{{ item.emoji }}</div>
+    </div>
+    <div class="item-content">
+      <h3 class="item-title">{{ item.name }}</h3>
+      <p class="item-description">{{ item.desc }}</p>
+      <div class="item-footer">
+        <span class="item-price">Nrs {{ item.price }}</span>
+        <div class="quantity-selector">
+          <input type="number" id="{{ item.name }}" name="{{ item.name }}" min="0" max="10" value="0" class="quantity-input">
+          <button type="button" class="add-to-cart" data-item="{{ item.name }}" data-price="{{ item.price }}">Add</button>
         </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
 
         <div class="order-summary">
           <div class="order-code">

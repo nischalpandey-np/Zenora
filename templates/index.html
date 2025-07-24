@@ -3,250 +3,441 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title> HOME| ZENORA</title>
+  <title>HOME | ZENORA</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.0.6/tsparticles.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-  :root {
-    --primary: #6366f1;
-    --primary-dark: #4f46e5;
-    --secondary: #ec4899;
-    --accent: #f97316;
-    --dark: #1e293b;
-  }
-  
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #f9fafb, #f0f4f8);
-    color: var(--dark);
-    overflow-x: hidden;
-  }
-  
-  /* Hero Section with Particle Background */
-  .hero-bg {
-    position: relative;
-    background: linear-gradient(-45deg, #1a1a1a, #2a2a2a, #3a3a3a, #1a1a1a);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-    overflow: hidden;
-  }
-  
-  #particles-js {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 0;
-  }
-  
-  .hero-content {
-    position: relative;
-    z-index: 10;
-  }
-  
-  /* Splash Cards */
-  .splash-card {
-    perspective: 1500px;
-  }
-  
-  .splash-inner {
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    transform: rotateY(0deg);
-  }
-  
-  .splash-card:hover .splash-inner {
-    transform: rotateY(15deg) rotateX(5deg) scale(1.03);
-  }
-  
-  .splash-image {
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
-    border-radius: 24px 24px 0 0;
-  }
-  
-  .splash-card:hover .splash-image {
-    transform: translateY(-10px);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-  
-  /* Gradient backgrounds */
-  .restaurant-splash {
-    background: radial-gradient(circle at top left, #ff5f6d, #ffc371);
-  }
-  
-  .clothing-splash {
-    background: linear-gradient(135deg, #9d50bb, #6e48aa);
-  }
-  
-  .quality-splash {
-    background: linear-gradient(135deg, #fceabb, #f8b500);
-  }
-  
-  .service-splash {
-    background: linear-gradient(135deg, #6dd5ed, #2193b0);
-  }
-  
-  .delivery-splash {
-    background: linear-gradient(135deg, #ff416c, #ff4b2b);
-  }
-  
-  .support-splash {
-    background: linear-gradient(135deg, #11998e, #38ef7d);
-  }
-  
-  /* Buttons */
-  .btn-gradient {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    transform: translateY(0);
-  }
-  
-  .btn-gradient::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -75%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0.6), rgba(255,255,255,0.3));
-    transform: skewX(-25deg);
-    transition: left 0.7s ease;
-    z-index: 10;
-  }
-  
-  .btn-gradient:hover::before {
-    left: 150%;
-  }
-  
-  .btn-gradient:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
-  }
-  
-  /* Animations */
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  
-  .fade-up {
-    opacity: 0;
-    transform: translateY(15px);
-    animation: fadeUp 0.7s forwards;
-  }
-  
-  .fade-up.delay-1 { animation-delay: 0.15s; }
-  .fade-up.delay-2 { animation-delay: 0.3s; }
-  .fade-up.delay-3 { animation-delay: 0.45s; }
-  .fade-up.delay-4 { animation-delay: 0.6s; }
-  
-  @keyframes fadeUp {
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  /* Floating animation */
-  @keyframes floating {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-    100% { transform: translateY(0px); }
-  }
-  
-  .floating {
-    animation: floating 6s ease-in-out infinite;
-  }
-  
-  .floating.delay-1 { animation-delay: 0.5s; }
-  .floating.delay-2 { animation-delay: 1s; }
-  
-  /* Scroll animations */
-  [data-aos] {
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  
-  [data-aos="fade-up"] {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  
-  [data-aos="fade-up"].aos-animate {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  
-  [data-aos="zoom-in"] {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  
-  [data-aos="zoom-in"].aos-animate {
-    opacity: 1;
-    transform: scale(1);
-  }
-  
-  /* Testimonial cards */
-  .testimonial-card {
-    background: linear-gradient(145deg, #ffffff, #f8fafc);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    border-radius: 20px;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-  }
-  
-  .testimonial-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Newsletter form */
-  .newsletter-form input {
-    transition: all 0.3s ease;
-  }
-  
-  .newsletter-form input:focus {
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
-  }
-  
-  /* Footer */
-  .footer-links a {
-    position: relative;
-  }
-  
-  .footer-links a::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: -4px;
-    left: 0;
-    background-color: white;
-    transition: width 0.3s ease;
-  }
-  
-  .footer-links a:hover::after {
-    width: 100%;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .hero-buttons {
-      flex-direction: column;
-      gap: 16px;
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #ec4899;
+      --accent: #f97316;
+      --dark: #1e293b;
     }
     
-    .hero-buttons a {
-      width: 100%;
-      text-align: center;
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f9fafb, #f0f4f8);
+      color: var(--dark);
+      overflow-x: hidden;
     }
-  }
-</style>
+    
+    /* Hero Section with Particle Background */
+    .hero-bg {
+      position: relative;
+      background: linear-gradient(-45deg, #1a1a1a, #2a2a2a, #3a3a3a, #1a1a1a);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      overflow: hidden;
+    }
+    
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 10;
+    }
+    
+    /* Splash Cards */
+    .splash-card {
+      perspective: 1500px;
+    }
+    
+    .splash-inner {
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform: rotateY(0deg);
+    }
+    
+    .splash-card:hover .splash-inner {
+      transform: rotateY(15deg) rotateX(5deg) scale(1.03);
+    }
+    
+    .splash-image {
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      transition: all 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+      border-radius: 24px 24px 0 0;
+    }
+    
+    .splash-card:hover .splash-image {
+      transform: translateY(-10px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    /* Gradient backgrounds */
+    .restaurant-splash {
+      background: radial-gradient(circle at top left, #ff5f6d, #ffc371);
+    }
+    
+    .clothing-splash {
+      background: linear-gradient(135deg, #9d50bb, #6e48aa);
+    }
+    
+    .quality-splash {
+      background: linear-gradient(135deg, #fceabb, #f8b500);
+    }
+    
+    .service-splash {
+      background: linear-gradient(135deg, #6dd5ed, #2193b0);
+    }
+    
+    .delivery-splash {
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    }
+    
+    .support-splash {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+    }
+    
+    /* Buttons */
+    .btn-gradient {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      transform: translateY(0);
+    }
+    
+    .btn-gradient::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0.6), rgba(255,255,255,0.3));
+      transform: skewX(-25deg);
+      transition: left 0.7s ease;
+      z-index: 10;
+    }
+    
+    .btn-gradient:hover::before {
+      left: 150%;
+    }
+    
+    .btn-gradient:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+    }
+    
+    /* Animations */
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .fade-up {
+      opacity: 0;
+      transform: translateY(15px);
+      animation: fadeUp 0.7s forwards;
+    }
+    
+    .fade-up.delay-1 { animation-delay: 0.15s; }
+    .fade-up.delay-2 { animation-delay: 0.3s; }
+    .fade-up.delay-3 { animation-delay: 0.45s; }
+    .fade-up.delay-4 { animation-delay: 0.6s; }
+    
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Floating animation */
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .floating {
+      animation: floating 6s ease-in-out infinite;
+    }
+    
+    .floating.delay-1 { animation-delay: 0.5s; }
+    .floating.delay-2 { animation-delay: 1s; }
+    
+    /* Scroll animations */
+    [data-aos] {
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    
+    [data-aos="fade-up"] {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    
+    [data-aos="fade-up"].aos-animate {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    [data-aos="zoom-in"] {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    
+    [data-aos="zoom-in"].aos-animate {
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    /* Testimonial cards */
+    .testimonial-card {
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      border-radius: 20px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    
+    .testimonial-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Newsletter form */
+    .newsletter-form input {
+      transition: all 0.3s ease;
+    }
+    
+    .newsletter-form input:focus {
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+    }
+    
+    /* Footer */
+    .footer-links a {
+      position: relative;
+    }
+    
+    .footer-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background-color: white;
+      transition: width 0.3s ease;
+    }
+    
+    .footer-links a:hover::after {
+      width: 100%;
+    }
+    
+    /* Mobile Navigation */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 80%;
+      max-width: 320px;
+      height: 100vh;
+      background: white;
+      z-index: 1000;
+      transition: all 0.4s ease;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    }
+    
+    .mobile-nav.open {
+      right: 0;
+    }
+    
+    .mobile-nav-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .mobile-nav-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    /* Mobile menu animation */
+    @keyframes slideIn {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .hero-buttons {
+        flex-direction: column;
+        gap: 16px;
+      }
+      
+      .hero-buttons a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .desktop-nav {
+        display: none;
+      }
+      
+      .mobile-toggle {
+        display: block;
+      }
+      
+      .hero-bg {
+        padding-top: 100px;
+        padding-bottom: 80px;
+      }
+      
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      .splash-card {
+        max-width: 100%;
+        margin-bottom: 2rem;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .contact-section {
+        flex-direction: column;
+      }
+      
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+    
+    @media (min-width: 769px) {
+      .mobile-toggle {
+        display: none;
+      }
+    }
+    
+    /* Enhanced Typography */
+    h1, h2, h3, h4 {
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    
+    h1 {
+      font-size: 3.5rem;
+    }
+    
+    h2 {
+      font-size: 2.5rem;
+    }
+    
+    h3 {
+      font-size: 1.75rem;
+    }
+    
+    p {
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Improved Card Shadows */
+    .card-shadow {
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+    }
+    
+    .card-shadow:hover {
+      box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    }
+    
+    /* Subtle Background Patterns */
+    .texture-bg {
+      background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    
+    /* Better Form Styling */
+    .form-input {
+      transition: all 0.3s ease;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    
+    /* Enhanced Section Spacing */
+    section {
+      padding: 5rem 0;
+    }
+    
+    /* Smooth Scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Back to top button */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 99;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .back-to-top:hover {
+      background: var(--primary-dark);
+      transform: translateY(-3px);
+    }
+    
+    /* Loading spinner */
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top: 4px solid white;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
@@ -261,7 +452,9 @@
           PREMIUM
         </div>
       </div>
-      <nav>
+      
+      <!-- Desktop Navigation -->
+      <nav class="desktop-nav">
         <ul class="flex space-x-8 text-lg font-semibold">
           <li><a href="{{ url_for('index') }}" class="hover:text-indigo-600 transition relative group">
             Home
@@ -287,6 +480,42 @@
           {% endif %}
         </ul>
       </nav>
+      
+      <!-- Mobile Navigation Toggle -->
+      <button class="mobile-toggle text-indigo-600 text-2xl md:hidden" id="mobileMenuButton">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+    
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+    
+    <div class="mobile-nav" id="mobileNav">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-8">
+          <div class="text-2xl font-bold text-indigo-600">~ZENORA</div>
+          <button class="text-gray-500 text-2xl" id="closeMobileMenu">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <ul class="space-y-4 text-lg">
+          <li><a href="{{ url_for('index') }}" class="block py-3 border-b border-gray-100 hover:text-indigo-600">Home</a></li>
+          <li><a href="#" class="block py-3 border-b border-gray-100 hover:text-indigo-600">About</a></li>
+          <li><a href="#" class="block py-3 border-b border-gray-100 hover:text-indigo-600">Contact</a></li>
+          
+          {% if session.user_id %}
+            {% if user and user.is_admin %}
+              <li><a href="{{ url_for('admin.admin_dashboard') }}" class="block py-3 border-b border-gray-100 hover:text-indigo-600">Admin</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('user_profile') }}" class="block py-3 border-b border-gray-100 hover:text-indigo-600">Profile</a></li>
+            <li><a href="{{ url_for('auth.logout') }}" class="block py-3 border-b border-gray-100 hover:text-indigo-600">Logout</a></li>
+          {% else %}
+            <li><a href="{{ url_for('auth.login') }}" class="block py-3 border-b border-gray-100 hover:text-indigo-600">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}" class="block py-3 bg-indigo-600 text-white rounded-lg text-center mt-4">Register</a></li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
   </header>
 
@@ -339,9 +568,9 @@
       
       <div class="flex flex-col lg:flex-row gap-12 justify-center max-w-7xl mx-auto">
         <!-- Restaurant Card -->
-        <div class="splash-card flex-1 max-w-xl">
+        <div class="splash-card flex-1 max-w-xl" data-aos="fade-right">
           <a href="{{ url_for('digibistro') }}" class="group">
-            <div class="splash-inner bg-white rounded-3xl shadow-2xl overflow-hidden cursor-pointer">
+            <div class="splash-inner bg-white rounded-3xl shadow-2xl overflow-hidden cursor-pointer card-shadow">
               <div class="restaurant-splash splash-image h-72 flex items-center justify-center text-white font-extrabold text-4xl md:text-5xl tracking-wider drop-shadow-lg select-none">
                 <div class="transform group-hover:scale-110 transition-transform duration-500">🍽️ DIGI-BISTRO</div>
               </div>
@@ -385,9 +614,9 @@
         </div>
 
         <!-- Clothing Card -->
-        <div class="splash-card flex-1 max-w-xl">
+        <div class="splash-card flex-1 max-w-xl" data-aos="fade-left">
           <a href="{{ url_for('clothstore') }}" class="group">
-            <div class="splash-inner bg-white rounded-3xl shadow-2xl overflow-hidden cursor-pointer">
+            <div class="splash-inner bg-white rounded-3xl shadow-2xl overflow-hidden cursor-pointer card-shadow">
               <div class="clothing-splash splash-image h-72 flex items-center justify-center text-white font-extrabold text-4xl md:text-5xl tracking-wider drop-shadow-lg select-none">
                 <div class="transform group-hover:scale-110 transition-transform duration-500">👗 FASHION HUB</div>
               </div>
@@ -434,7 +663,7 @@
   </section>
 
   <!-- Features Section -->
-  <section class="py-20 bg-gradient-to-br from-gray-50 to-indigo-50">
+  <section class="py-20 bg-gradient-to-br from-gray-50 to-indigo-50 texture-bg">
     <div class="container mx-auto px-6 max-w-7xl">
       <div class="text-center max-w-3xl mx-auto mb-20">
         <h2 class="text-4xl font-extrabold text-gray-900 mb-6" data-aos="fade-up">
@@ -445,7 +674,7 @@
         </p>
       </div>
       
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 features-grid">
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-default transform hover:-translate-y-2" data-aos="zoom-in">
           <div class="quality-splash splash-image h-52 flex items-center justify-center text-white font-extrabold text-4xl drop-shadow-lg select-none">
             ⭐ PREMIUM QUALITY
@@ -500,10 +729,89 @@
     </div>
   </section>
 
+  <!-- Testimonials Section -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-6 max-w-7xl">
+      <div class="text-center max-w-3xl mx-auto mb-20">
+        <h2 class="text-4xl font-extrabold text-gray-900 mb-6" data-aos="fade-up">
+          What Our <span class="text-indigo-600">Customers</span> Say
+        </h2>
+        <p class="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="100">
+          Hear from our satisfied customers about their experiences with ZENORA
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="testimonial-card p-8 rounded-xl" data-aos="fade-up">
+          <div class="flex items-center mb-6">
+            <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mr-4">
+              <i class="fas fa-user text-indigo-600 text-2xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg">Samantha P.</h4>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-600 italic">
+            "The Digi-Bistro has become my go-to for delicious meals. The quality is consistently excellent and delivery is always on time!"
+          </p>
+        </div>
+        
+        <div class="testimonial-card p-8 rounded-xl" data-aos="fade-up" data-aos-delay="100">
+          <div class="flex items-center mb-6">
+            <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mr-4">
+              <i class="fas fa-user text-indigo-600 text-2xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg">Rajesh K.</h4>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-600 italic">
+            "The Fashion Hub has an amazing collection. I bought three outfits last month and the quality is outstanding for the price."
+          </p>
+        </div>
+        
+        <div class="testimonial-card p-8 rounded-xl" data-aos="fade-up" data-aos-delay="200">
+          <div class="flex items-center mb-6">
+            <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mr-4">
+              <i class="fas fa-user text-indigo-600 text-2xl"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-lg">Amita S.</h4>
+              <div class="flex text-yellow-400">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-600 italic">
+            "ZENORA's customer service is exceptional. They resolved my issue within hours and went above and beyond to make it right."
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Contact Us Section -->
   <section class="py-20 bg-gradient-to-r from-indigo-600 to-purple-700 text-white">
     <div class="container mx-auto px-6 max-w-5xl">
-      <div class="flex flex-col lg:flex-row items-center justify-between gap-10">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-10 contact-section">
         <div class="lg:w-1/2 text-center lg:text-left">
           <h2 class="text-3xl md:text-4xl font-extrabold mb-6" data-aos="fade-right">
             Contact ZENORA
@@ -554,22 +862,22 @@
               <div class="grid grid-cols-1 gap-6 mb-6">
                 <div>
                   <label class="block text-white text-sm font-medium mb-2">Your Name</label>
-                  <input type="text" id="name" name="name" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50" placeholder="John Doe" required>
+                  <input type="text" id="name" name="name" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50 form-input" placeholder="John Doe" required>
                 </div>
                 
                 <div>
                   <label class="block text-white text-sm font-medium mb-2">Email Address</label>
-                  <input type="email" id="email" name="email" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50" placeholder="you@example.com" required>
+                  <input type="email" id="email" name="email" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50 form-input" placeholder="you@example.com" required>
                 </div>
                 
                 <div>
                   <label class="block text-white text-sm font-medium mb-2">Subject</label>
-                  <input type="text" id="subject" name="subject" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50" placeholder="How can we help?" required>
+                  <input type="text" id="subject" name="subject" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50 form-input" placeholder="How can we help?" required>
                 </div>
                 
                 <div>
                   <label class="block text-white text-sm font-medium mb-2">Message</label>
-                  <textarea id="message" name="message" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50" placeholder="Your message here..." rows="4" required></textarea>
+                  <textarea id="message" name="message" class="w-full px-4 py-3 rounded-xl bg-white bg-opacity-15 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:bg-opacity-25 focus:border-opacity-50 form-input" placeholder="Your message here..." rows="4" required></textarea>
                 </div>
                 
                 <div>
@@ -586,8 +894,9 @@
                 </div>
               </div>
               
-              <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-[1.02]">
-                Send Message
+              <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-[1.02] flex items-center justify-center">
+                <span id="submit-text">Send Message</span>
+                <div id="submit-spinner" class="spinner ml-3 hidden"></div>
               </button>
               
               <p class="text-center mt-4 text-white text-opacity-70 text-xs">
@@ -603,7 +912,7 @@
   <!-- Footer -->
   <footer class="bg-gray-900 text-gray-300 py-16">
     <div class="container mx-auto px-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 footer-grid">
         <div>
           <h3 class="text-2xl font-bold text-white mb-6">~ZENORA</h3>
           <p class="mb-6 max-w-xs">
@@ -675,6 +984,11 @@
       </div>
     </div>
   </footer>
+
+  <!-- Back to top button -->
+  <a href="#" class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </a>
 
   <script>
     // Particles.js configuration
@@ -770,6 +1084,27 @@
         });
       }
       
+      // Mobile navigation toggle
+      const mobileMenuButton = document.getElementById('mobileMenuButton');
+      const closeMobileMenu = document.getElementById('closeMobileMenu');
+      const mobileNav = document.getElementById('mobileNav');
+      const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+      
+      mobileMenuButton.addEventListener('click', () => {
+        mobileNav.classList.add('open');
+        mobileNavOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+      
+      closeMobileMenu.addEventListener('click', closeMobileNav);
+      mobileNavOverlay.addEventListener('click', closeMobileNav);
+      
+      function closeMobileNav() {
+        mobileNav.classList.remove('open');
+        mobileNavOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+      
       // Simple scroll animation implementation
       function initAOS() {
         const elements = document.querySelectorAll('[data-aos]');
@@ -831,6 +1166,29 @@
           fileNameDisplay.classList.add('text-opacity-80');
         }
       });
+      
+      // Back to top button
+      const backToTop = document.getElementById('backToTop');
+      
+      window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 300) {
+          backToTop.classList.add('visible');
+        } else {
+          backToTop.classList.remove('visible');
+        }
+      });
+      
+      // Contact form submission
+      const contactForm = document.getElementById('contactForm');
+      const submitText = document.getElementById('submit-text');
+      const submitSpinner = document.getElementById('submit-spinner');
+      
+      if (contactForm) {
+        contactForm.addEventListener('submit', function() {
+          submitText.textContent = 'Sending...';
+          submitSpinner.classList.remove('hidden');
+        });
+      }
     });
   </script>
 </body>

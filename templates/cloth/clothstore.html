@@ -7,6 +7,34 @@
   <link rel="stylesheet" href="/static/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+      <style>
+        .item-image-container {
+          height: 200px;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+        .item-image-container .item-emoji {
+          font-size: 3rem;
+          z-index: 2;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .item-image-container::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          
+        }
+      </style>
 </head>
 <body>
   <header class="header">
@@ -46,15 +74,14 @@
       </div>
     </div>
   </section>
-
-  <section class="section" id="featured">
+<section class="section" id="featured">
     <div class="container">
       <h2 class="section-title">Featured Collection</h2>
       <p class="text-center text-gray-600 mb-8">Curated selection of our most popular items this season</p>
       
       <div class="item-grid">
         <div class="item-card hover-grow">
-          <div class="item-image-container tshirt-bg">
+          <div class="item-image-container" style="background-image: url('https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')">
             <div class="item-badge">Bestseller</div>
             <div class="item-emoji">👕</div>
           </div>
@@ -71,7 +98,7 @@
         </div>
 
         <div class="item-card hover-grow">
-          <div class="item-image-container jeans-bg">
+          <div class="item-image-container" style="background-image: url('https://images.unsplash.com/photo-1541099649105-f69ad21f3246?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')">
             <div class="item-badge">New</div>
             <div class="item-emoji">👖</div>
           </div>
@@ -88,7 +115,7 @@
         </div>
 
         <div class="item-card hover-grow">
-          <div class="item-image-container dress-bg">
+          <div class="item-image-container" style="background-image: url('https://images.unsplash.com/photo-1659576294143-1da218a2d82e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHN1bW1lciUyMGRyZXNzfGVufDB8fDB8fHww')">
             <div class="item-emoji">👗</div>
           </div>
           <div class="item-content">
@@ -104,7 +131,7 @@
         </div>
 
         <div class="item-card hover-grow">
-          <div class="item-image-container jacket-bg">
+          <div class="item-image-container" style="background-image: url('https://images.unsplash.com/photo-1548883354-d056ab7b441f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzJ8fGJvbWJlciUyMGphY2tldHxlbnwwfHwwfHx8MA%3D%3D')">
             <div class="item-badge">Limited</div>
             <div class="item-emoji">🧥</div>
           </div>
@@ -126,6 +153,7 @@
       </div>
     </div>
   </section>
+
 
   <section class="section bg-gray-100">
     <div class="container">

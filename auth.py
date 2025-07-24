@@ -18,8 +18,16 @@ def login():
             session['user_id'] = user['id']
             session['username'] = user['username']
             flash('Logged in successfully!', 'success')
-            next_url = request.args.get('next') or url_for('view_menu')
-            return redirect(next_url)
+            
+            # Check where the user came from
+            next_url = request.args.get('next')
+            if next_url:
+                return redirect(next_url)
+            elif session.get('store_origin') == 'clothing':
+                return redirect(url_for('view_clothing'))
+            else:
+                # Default to restaurant menu
+                return redirect(url_for('view_menu'))
 
         flash('Invalid username or password.', 'error')
     return render_template('auth/login.html')

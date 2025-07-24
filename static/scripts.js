@@ -16,10 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!quantityInput) return console.error(`No quantity input for ${itemName}`);
 
       let quantity = parseInt(quantityInput.value, 10) || 0;
-      quantity = quantity === 0 ? 1 : quantity + 1;
+      
+      // Toggle between add and remove
+      if (button.textContent.trim() === 'Add') {
+        quantity = quantity + 1;
+        button.textContent = 'Remove';
+      } else {
+        quantity = 0;
+        button.textContent = 'Add';
+      }
+      
       quantityInput.value = quantity;
-
-      button.textContent = quantity > 0 ? 'Remove' : 'Add';
 
       if (quantity > 0) {
         cart[itemName] = { name: itemName, price: itemPrice, quantity };
@@ -38,12 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const itemPrice = parseFloat(button?.dataset.price || 0);
       const quantity = parseInt(input.value, 10) || 0;
 
+      if (button) {
+        button.textContent = quantity > 0 ? 'Remove' : 'Add';
+      }
+      
       if (quantity > 0) {
         cart[itemName] = { name: itemName, price: itemPrice, quantity };
-        if (button) button.textContent = 'Remove';
       } else {
         delete cart[itemName];
-        if (button) button.textContent = 'Add';
       }
       updateCartDisplay();
     });
@@ -96,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Rating + Review logic
-
 document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('.star-rating input[type="radio"]').forEach(input => {
     input.addEventListener('change', () => {
