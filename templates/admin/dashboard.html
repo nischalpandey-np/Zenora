@@ -1,445 +1,456 @@
-<!-- Enhanced Admin Dashboard -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard - ZENORA</title>
-  <link rel="stylesheet" href="/static/styles.css" />
-  <style>
-    /* Dashboard Metrics */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    
-    .metric-card {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease;
-    }
-    
-    .metric-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-    }
-    
-    .metric-value {
-      font-size: 2.25rem;
-      font-weight: 700;
-      margin: 0.5rem 0;
-      color: #4f46e5;
-    }
-    
-    /* Filter Bar */
-    .filter-bar {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-      align-items: center;
-    }
-    
-    .status-filter {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    
-    .status-btn {
-      padding: 0.5rem 1rem;
-      border-radius: 9999px;
-      background: #f3f4f6;
-      border: none;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-    
-    .status-btn.active {
-      background: #4f46e5;
-      color: white;
-    }
-    
-    /* Order Timeline */
-    .timeline {
-      position: relative;
-      padding-left: 2rem;
-      margin: 1.5rem 0;
-      border-left: 2px solid #e5e7eb;
-    }
-    
-    .timeline-item {
-      position: relative;
-      margin-bottom: 1.5rem;
-    }
-    
-    .timeline-item:last-child {
-      margin-bottom: 0;
-    }
-    
-    .timeline-dot {
-      position: absolute;
-      left: -1.375rem;
-      top: 0.25rem;
-      width: 1.25rem;
-      height: 1.25rem;
-      border-radius: 50%;
-      background: #e5e7eb;
-      border: 3px solid white;
-    }
-    
-    .timeline-item.active .timeline-dot {
-      background: #4f46e5;
-    }
-    
-    /* Action Buttons */
-    .action-buttons {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    
-    .btn-sm {
-      padding: 0.4rem 0.8rem;
-      font-size: 0.875rem;
-    }
-    
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .modal-content {
-      background: white;
-      border-radius: 0.5rem;
-      padding: 2rem;
-      width: 90%;
-      max-width: 500px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    /* Status badge styles */
-    .status-badge {
-      padding: 0.25rem 0.5rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      display: inline-block;
-      white-space: nowrap;
-    }
-    .status-pending { background-color: #fef3c7; color: #92400e; }
-    .status-approved { background-color: #dbeafe; color: #1e40af; }
-    .status-processing { background-color: #ede9fe; color: #6b21a8; }
-    .status-completed { background-color: #d1fae5; color: #065f46; }
-    .status-cancelled { background-color: #fee2e2; color: #991b1b; }
-    .status-declined { background-color: #f3f4f6; color: #374151; }
-    
-    /* Toast notification */
-    .toast {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 1rem 1.5rem;
-      border-radius: 0.5rem;
-      color: white;
-      background-color: #4f46e5;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      transform: translateY(-100px);
-      opacity: 0;
-      transition: all 0.3s ease;
-      z-index: 1100;
-    }
-    
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    
-    .toast.success {
-      background-color: #10b981;
-    }
-    
-    .toast.error {
-      background-color: #ef4444;
-    }
-
-    /* Utility classes */
-    .text-gray-500 { color: #6b7280; }
-    .text-sm { font-size: 0.875rem; }
-    .text-green-600 { color: #059669; }
-    .text-red-600 { color: #dc2626; }
-    .text-xl { font-size: 1.25rem; }
-    .font-bold { font-weight: 700; }
-    .flex { display: flex; }
-    .justify-between { justify-content: space-between; }
-    .items-center { align-items: center; }
-    .w-full { width: 100%; }
-    .mb-4 { margin-bottom: 1rem; }
-    .mt-4 { margin-top: 1rem; }
-    .gap-2 { gap: 0.5rem; }
-    .justify-end { justify-content: flex-end; }
-
-    /* Button styles */
-    .btn {
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      border: none;
-      cursor: pointer;
-      font-weight: 500;
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
-      transition: all 0.2s;
-    }
-    
-    .btn-primary {
-      background-color: #4f46e5;
-      color: white;
-    }
-    
-    .btn-primary:hover {
-      background-color: #4338ca;
-    }
-    
-    .btn-outline {
-      border: 1px solid #d1d5db;
-      background-color: white;
-      color: #374151;
-    }
-    
-    .btn-outline:hover {
-      background-color: #f9fafb;
-    }
-    
-    .btn-danger {
-      background-color: #ef4444;
-      color: white;
-    }
-    
-    .btn-danger:hover {
-      background-color: #dc2626;
-    }
-
-    /* Form styles */
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    
-    .form-label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: #374151;
-    }
-    
-    .form-control {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-    }
-    
-    .form-control:focus {
-      outline: none;
-      border-color: #4f46e5;
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    }
-
-    /* Card styles */
-    .card {
-      background: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-    
-    .card-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid #e5e7eb;
-      background-color: #f9fafb;
-    }
-    
-    .card-body {
-      padding: 1.5rem;
-    }
-
-    /* Table styles */
-    .table-responsive {
-      overflow-x: auto;
-    }
-    
-    .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    
-    .admin-table th,
-    .admin-table td {
-      padding: 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    
-    .admin-table th {
-      background-color: #f9fafb;
-      font-weight: 600;
-      color: #374151;
-    }
-    
-    .admin-table tbody tr:hover {
-      background-color: #f9fafb;
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="/static/admin.css" />
 </head>
-<body>
-  <header class="header">
-    <div class="container header-container">
-      <a href="/" class="logo">
-        <div class="logo-icon">GB</div>
-        <span>Gourmet Bistro</span>
-      </a>
-      <nav class="nav-menu">
-        <a href="{{ url_for('index') }}" class="nav-link">Home</a>
-        <a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link active">Admin Dashboard</a>
-        <a href="{{ url_for('user_profile') }}" class="nav-link">Profile</a>
-        <a href="{{ url_for('auth.logout') }}" class="nav-link">Logout</a>
-      </nav>
+<body class="admin-dashboard">
+  <!-- Mobile Menu Toggle -->
+  <div class="mobile-menu-toggle">
+    <button id="mobileMenuToggle" class="btn btn-icon">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+
+  <!-- Admin Sidebar -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+      <h1 class="logo">Zenora Admin</h1>
     </div>
-  </header>
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="active">
+          <a href="{{ url_for('admin.admin_dashboard') }}">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="{{ url_for('admin.admin_analytics') }}">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="has-submenu">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Orders</span>
+            <i class="fas fa-chevron-down submenu-toggle"></i>
+          </a>
+          <ul class="submenu">
+            <li><a href="{{ url_for('admin.admin_dashboard') }}?status=pending">Pending</a></li>
+            <li><a href="{{ url_for('admin.admin_dashboard') }}?status=processing">Processing</a></li>
+            <li><a href="{{ url_for('admin.admin_dashboard') }}?status=completed">Completed</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" class="has-submenu">
+            <i class="fas fa-users"></i>
+            <span>Users</span>
+            <i class="fas fa-chevron-down submenu-toggle"></i>
+          </a>
+          <ul class="submenu">
+            <li><a href="{{ url_for('admin.admin_dashboard') }}?tab=users">All Users</a></li>
+            <li><a href="{{ url_for('admin.admin_dashboard') }}?tab=users&filter=admin">Admins</a></li>
+            <li><a href="{{ url_for('admin.admin_dashboard') }}?tab=users&filter=new">New Users</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="{{ url_for('index') }}">
+            <i class="fas fa-store"></i>
+            <span>View Store</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="{{ url_for('auth.logout') }}" class="btn btn-logout">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </aside>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="toast"></div>
+  <!-- Main Content -->
+  <main class="admin-main">
+    <!-- Header -->
+    <header class="admin-header">
+      <div class="header-title">
+        <h1>Dashboard Overview</h1>
+        <p class="text-muted">Welcome back, Admin</p>
+      </div>
+      <div class="header-actions">
+        <div class="search-box">
+          <input type="text" placeholder="Search orders, users..." />
+          <button class="btn btn-icon">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+        <button class="btn btn-notification">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">3</span>
+        </button>
+      </div>
+    </header>
 
-  <section class="section">
-    <div class="container">
-      <h1 class="section-title">Admin Dashboard</h1>
-      
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Dashboard Content -->
+    <div class="admin-content">
       <!-- Metrics Cards -->
       <div class="metrics-grid">
         <div class="metric-card">
-          <div class="text-gray-500">Total Users</div>
-          <div class="metric-value">{{ metrics.total_users }}</div>
-          <div class="text-sm text-green-600">+{{ metrics.new_users }} new</div>
+          <div class="metric-icon bg-primary">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="metric-content">
+            <h3>Total Users</h3>
+            <p class="metric-value">{{ metrics.total_users }}</p>
+            <p class="metric-change positive">
+              <i class="fas fa-arrow-up"></i>
+              {{ metrics.new_users }} new this week
+            </p>
+          </div>
         </div>
-        
+
         <div class="metric-card">
-          <div class="text-gray-500">Total Orders</div>
-          <div class="metric-value">{{ metrics.total_orders }}</div>
-          <div class="text-sm text-gray-500">{{ metrics.avg_order_value|format_currency }} avg</div>
+          <div class="metric-icon bg-success">
+            <i class="fas fa-shopping-bag"></i>
+          </div>
+          <div class="metric-content">
+            <h3>Total Orders</h3>
+            <p class="metric-value">{{ metrics.total_orders }}</p>
+            <p class="metric-change">
+              Avg. {{ metrics.avg_order_value|format_currency }}
+            </p>
+          </div>
         </div>
-        
+
         <div class="metric-card">
-          <div class="text-gray-500">Revenue</div>
-          <div class="metric-value">{{ metrics.total_revenue|format_currency }}</div>
-          <div class="text-sm text-green-600">+{{ metrics.revenue_growth }}%</div>
+          <div class="metric-icon bg-warning">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="metric-content">
+            <h3>Total Revenue</h3>
+            <p class="metric-value">{{ metrics.total_revenue|format_currency }}</p>
+            <p class="metric-change {{ 'positive' if metrics.revenue_growth >= 0 else 'negative' }}">
+              <i class="fas fa-arrow-{{ 'up' if metrics.revenue_growth >= 0 else 'down' }}"></i>
+              {{ metrics.revenue_growth }}% from last month
+            </p>
+          </div>
         </div>
-        
+
         <div class="metric-card">
-          <div class="text-gray-500">Pending Orders</div>
-          <div class="metric-value">{{ metrics.pending_orders }}</div>
-          <div class="text-sm text-red-600">{{ metrics.declined_orders }} declined</div>
+          <div class="metric-icon bg-danger">
+            <i class="fas fa-exclamation-circle"></i>
+          </div>
+          <div class="metric-content">
+            <h3>Pending Orders</h3>
+            <p class="metric-value">{{ metrics.pending_orders }}</p>
+            <p class="metric-change negative">
+              {{ metrics.declined_orders }} declined
+            </p>
+          </div>
         </div>
       </div>
-      
-      <!-- Order Management -->
-      <div class="card">
-        <div class="card-header flex justify-between items-center">
-          <h2 class="text-xl font-bold">Order Management</h2>
-          <div class="filter-bar">
-            <div class="status-filter">
-              <button class="status-btn active" data-status="all">All</button>
-              <button class="status-btn" data-status="pending">Pending</button>
-              <button class="status-btn" data-status="processing">Processing</button>
-              <button class="status-btn" data-status="completed">Completed</button>
-              <button class="status-btn" data-status="cancelled">Cancelled</button>
+
+      <!-- Quick Stats -->
+<div class="quick-stats">
+  <div class="stat-card">
+    <h3>Current Month Revenue</h3>
+    <p class="stat-value">{{ metrics.current_month_revenue|format_currency }}</p>
+    <div class="progress-bar">
+      <div class="progress-fill" 
+           data-current="{{ metrics.current_month_revenue }}"
+           data-previous="{{ metrics.previous_month_revenue }}"></div>
+    </div>
+    <p class="stat-comparison">
+      {{ metrics.revenue_growth }}% vs last month
+    </p>
+  </div>
+  
+  <div class="stat-card">
+    <h3>Order Status Distribution</h3>
+    <div class="status-chart" 
+         data-pending="{{ metrics.pending_orders }}"
+         data-processing="{{ metrics.total_orders - metrics.pending_orders - metrics.declined_orders }}"
+         data-declined="{{ metrics.declined_orders }}"
+         data-total="{{ metrics.total_orders }}">
+      <div class="chart-bar pending"></div>
+      <div class="chart-bar processing"></div>
+      <div class="chart-bar declined"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle progress bar calculation
+  const progressFill = document.querySelector('.progress-fill');
+  if (progressFill) {
+    const current = parseFloat(progressFill.dataset.current) || 0;
+    const previous = parseFloat(progressFill.dataset.previous) || 0;
+    const total = current + previous;
+    const width = total > 0 ? (current / total * 100) : 50;
+    progressFill.style.width = `${width.toFixed(2)}%`;
+  }
+
+  // Handle status chart calculation
+  const statusChart = document.querySelector('.status-chart');
+  if (statusChart) {
+    const total = parseFloat(statusChart.dataset.total) || 1;
+    const pending = parseFloat(statusChart.dataset.pending);
+    const processing = parseFloat(statusChart.dataset.processing);
+    const declined = parseFloat(statusChart.dataset.declined);
+    
+    statusChart.querySelector('.pending').style.width = `${(pending / total * 100).toFixed(2)}%`;
+    statusChart.querySelector('.processing').style.width = `${(processing / total * 100).toFixed(2)}%`;
+    statusChart.querySelector('.declined').style.width = `${(declined / total * 100).toFixed(2)}%`;
+  }
+});
+</script>
+</div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <span class="legend-color pending"></span>
+              <span>Pending ({{ metrics.pending_orders }})</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color processing"></span>
+              <span>Processing ({{ metrics.total_orders - metrics.pending_orders - metrics.declined_orders }})</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color declined"></span>
+              <span>Declined ({{ metrics.declined_orders }})</span>
             </div>
           </div>
         </div>
-        
-        <div class="card-body">
-          <div class="table-responsive">
-            <!-- Order Table -->
-            <table class="admin-table w-full">
-              <thead>
-                <tr>
-                  <th>Order Code</th>
-                  <th>Customer</th>
-                  <th>Date</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Store</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for order in orders %}
-                <tr data-status="{{ order.status }}">
-                  <td>{{ order.order_code }}</td>
-                  <td>{{ order.customer_name }}</td>
-                  <td>{{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</td>
-                  <td>{{ order.total_price|format_currency }}</td>
-                  <td>
-                    <span class="status-badge status-{{ order.status }}">
-                      {{ order.status|title }}
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="orders">Recent Orders</button>
+        <button class="tab-btn" data-tab="users">Users</button>
+        <button class="tab-btn" data-tab="activity">Recent Activity</button>
+      </div>
+
+      <!-- Orders Tab -->
+      <div class="tab-content active" id="orders-tab">
+        <div class="card">
+          <div class="card-header">
+            <h2>Order Management</h2>
+            <div class="filter-bar">
+              <div class="status-filter">
+                <button class="status-btn active" data-status="all">All</button>
+                <button class="status-btn" data-status="pending">Pending</button>
+                <button class="status-btn" data-status="processing">Processing</button>
+                <button class="status-btn" data-status="completed">Completed</button>
+                <button class="status-btn" data-status="declined">Declined</button>
+              </div>
+              <div class="date-filter">
+                <input type="date" id="dateFrom" class="form-control" />
+                <span>to</span>
+                <input type="date" id="dateTo" class="form-control" />
+                <button class="btn btn-primary btn-sm">Apply</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order Code</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Store</th>
+                    <th>Items</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for order in orders %}
+                  <tr data-status="{{ order.status }}">
+                    <td>{{ order.order_code }}</td>
+                    <td>
+                      {% if order.customer_name %}
+                        {{ order.customer_name }}
+                      {% else %}
+                        {{ order.email|default('Guest') }}
+                      {% endif %}
+                    </td>
+                    <td>{{ order.order_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ order.total_price|format_currency }}</td>
+                    <td>
+                      <span class="status-badge status-{{ order.status }}">
+                        {{ order.status|title }}
+                      </span>
+                    </td>
+                    <td>{{ order.store_type|title }}</td>
+                    <td>{{ order.item_count }}</td>
+                    <td class="action-buttons">
+                      <a href="{{ url_for('admin.admin_order_detail', order_id=order.order_id) }}" 
+                        class="btn btn-sm btn-outline">
+                        <i class="fas fa-eye"></i> View
+                      </a>
+                      {% if order.status == 'pending' %}
+                        <button class="btn btn-sm btn-primary btn-approve" 
+                                data-order-id="{{ order.order_id }}">
+                          <i class="fas fa-check"></i> Approve
+                        </button>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="table-footer">
+              <div class="table-info">
+                Showing 1 to {{ orders|length }} of {{ metrics.total_orders }} entries
+              </div>
+              <div class="pagination">
+                <button class="btn btn-outline btn-sm" disabled>
+                  <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <button class="btn btn-outline btn-sm active">1</button>
+                <button class="btn btn-outline btn-sm">2</button>
+                <button class="btn btn-outline btn-sm">
+                  Next <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Users Tab -->
+      <div class="tab-content" id="users-tab">
+        <div class="card">
+          <div class="card-header">
+            <h2>User Management</h2>
+            <div class="filter-bar">
+              <div class="search-box">
+                <input type="text" placeholder="Search users..." />
+                <button class="btn btn-icon">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Joined</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for user in users %}
+                  <tr>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                      {% if user.is_admin %}
+                        <span class="badge bg-primary">Admin</span>
+                      {% else %}
+                        <span class="badge bg-secondary">User</span>
+                      {% endif %}
+                    </td>
+                    <td class="action-buttons">
+                      <a href="{{ url_for('admin.admin_user_detail', user_id=user.id) }}" 
+                        class="btn btn-sm btn-outline">
+                        <i class="fas fa-user-edit"></i> Edit
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Tab -->
+      <div class="tab-content" id="activity-tab">
+        <div class="card">
+          <div class="card-header">
+            <h2>Recent Activity</h2>
+          </div>
+          
+          <div class="card-body">
+            <div class="activity-feed">
+              {% for activity in recent_activity %}
+              <div class="activity-item">
+                <div class="activity-icon">
+                  <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-message">
+                    <strong>{{ activity.customer_username or activity.customer_name }}</strong> placed order 
+                    <a href="{{ url_for('admin.admin_order_detail', order_id=activity.order_id) }}">#{{ activity.order_code }}</a>
+                  </div>
+                  <div class="activity-meta">
+                    <span class="text-muted">{{ activity.order_date.strftime('%Y-%m-%d %H:%M') }}</span>
+                    <span class="status-badge status-{{ activity.status }}">
+                      {{ activity.status|title }}
                     </span>
-                  </td>
-                  <td>{{ order.store_type|title }}</td>
-                  <td class="action-buttons">
-                    <a href="{{ url_for('admin.admin_order_detail', order_id=order.order_id) }}" 
-                       class="btn btn-sm btn-outline">
-                      Manage
-                    </a>
-                    {% if order.status == 'pending' %}
-                      <button class="btn btn-sm btn-primary btn-approve" 
-                              data-order-id="{{ order.order_id }}">
-                        Approve
-                      </button>
-                      <button class="btn btn-sm btn-danger btn-decline" 
-                              data-order-id="{{ order.order_id }}">
-                        Decline
-                      </button>
-                    {% endif %}
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+                    <span class="badge">{{ activity.store_type|title }}</span>
+                  </div>
+                </div>
+                <div class="activity-value">
+                  {{ activity.total_price|format_currency }}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
-  
+  </main>
+
   <!-- Modals -->
   <div id="approveModal" class="modal">
     <div class="modal-content">
-      <h3 class="text-xl font-bold mb-4">Approve Order</h3>
-      <form id="approveForm" action="{{ url_for('admin.admin_update_order') }}" method="POST">
+      <div class="modal-header">
+        <h3>Approve Order</h3>
+        <button class="btn btn-icon btn-modal-close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="approveForm" action="{{ url_for('admin.update_order_status') }}" method="POST">
         <input type="hidden" name="order_id" id="approveOrderId" />
         <input type="hidden" name="status" value="approved" />
-        <div class="form-group">
-          <label class="form-label">Admin Notes</label>
-          <textarea name="admin_notes" class="form-control" placeholder="Add notes about this approval"></textarea>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Admin Notes</label>
+            <textarea name="admin_notes" class="form-control" placeholder="Add notes about this approval"></textarea>
+          </div>
         </div>
-        <div class="flex justify-end gap-2 mt-4">
+        <div class="modal-footer">
           <button type="button" class="btn btn-outline btn-modal-cancel">Cancel</button>
-          <button type="submit" class="btn btn-primary">Confirm Approval</button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-check"></i> Confirm Approval
+          </button>
         </div>
       </form>
     </div>
@@ -447,146 +458,37 @@
   
   <div id="declineModal" class="modal">
     <div class="modal-content">
-      <h3 class="text-xl font-bold mb-4">Decline Order</h3>
-      <form id="declineForm" action="{{ url_for('admin.admin_update_order') }}" method="POST">
+      <div class="modal-header">
+        <h3>Decline Order</h3>
+        <button class="btn btn-icon btn-modal-close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="declineForm" action="{{ url_for('admin.update_order_status') }}" method="POST">
         <input type="hidden" name="order_id" id="declineOrderId" />
         <input type="hidden" name="status" value="declined" />
-        <div class="form-group">
-          <label class="form-label">Reason for Decline</label>
-          <textarea name="decline_reason" class="form-control" required placeholder="Explain why this order is being declined"></textarea>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Reason for Decline <span class="text-danger">*</span></label>
+            <textarea name="decline_reason" class="form-control" required 
+                      placeholder="Explain why this order is being declined"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Admin Notes</label>
+            <textarea name="admin_notes" class="form-control" 
+                      placeholder="Add any additional notes"></textarea>
+          </div>
         </div>
-        <div class="flex justify-end gap-2 mt-4">
+        <div class="modal-footer">
           <button type="button" class="btn btn-outline btn-modal-cancel">Cancel</button>
-          <button type="submit" class="btn btn-danger">Confirm Decline</button>
+          <button type="submit" class="btn btn-danger">
+            <i class="fas fa-times"></i> Confirm Decline
+          </button>
         </div>
       </form>
     </div>
   </div>
 
-  <script>
-    // Toast notification function
-    function showToast(message, type = 'success') {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.className = `toast show ${type}`;
-      
-      setTimeout(() => {
-        toast.className = 'toast';
-      }, 3000);
-    }
-
-    // Filter orders by status
-    document.querySelectorAll('.status-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const status = btn.dataset.status;
-        
-        // Update active button
-        document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        // Show/hide orders
-        document.querySelectorAll('tbody tr').forEach(row => {
-          if (status === 'all' || row.dataset.status === status) {
-            row.style.display = '';
-          } else {
-            row.style.display = 'none';
-          }
-        });
-      });
-    });
-    
-    // Modal handling
-    const modals = {
-      approve: document.getElementById('approveModal'),
-      decline: document.getElementById('declineModal')
-    };
-    
-    document.querySelectorAll('.btn-approve').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const orderId = btn.dataset.orderId;
-        document.getElementById('approveOrderId').value = orderId;
-        modals.approve.style.display = 'flex';
-      });
-    });
-    
-    document.querySelectorAll('.btn-decline').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const orderId = btn.dataset.orderId;
-        document.getElementById('declineOrderId').value = orderId;
-        modals.decline.style.display = 'flex';
-      });
-    });
-    
-    document.querySelectorAll('.btn-modal-cancel').forEach(btn => {
-      btn.addEventListener('click', () => {
-        Object.values(modals).forEach(modal => {
-          modal.style.display = 'none';
-        });
-      });
-    });
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-      if (e.target.classList.contains('modal')) {
-        e.target.style.display = 'none';
-      }
-    });
-
-    // Handle form submissions with toast notifications
-    document.getElementById('approveForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      
-      fetch(this.action, {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showToast(data.message || 'Order approved successfully!', 'success');
-          setTimeout(() => location.reload(), 1500);
-        } else {
-          showToast(data.message || 'Error approving order', 'error');
-        }
-        modals.approve.style.display = 'none';
-      })
-      .catch(error => {
-        showToast('An error occurred', 'error');
-        console.error('Error:', error);
-        modals.approve.style.display = 'none';
-      });
-    });
-
-    document.getElementById('declineForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (!this.decline_reason.value.trim()) {
-        showToast('Please provide a decline reason', 'error');
-        return;
-      }
-      
-      const formData = new FormData(this);
-      
-      fetch(this.action, {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showToast(data.message || 'Order declined successfully!', 'success');
-          setTimeout(() => location.reload(), 1500);
-        } else {
-          showToast(data.message || 'Error declining order', 'error');
-        }
-        modals.decline.style.display = 'none';
-      })
-      .catch(error => {
-        showToast('An error occurred', 'error');
-        console.error('Error:', error);
-        modals.decline.style.display = 'none';
-      });
-    });
-  </script>
+  <script src="/static/admin.js"></script>
 </body>
 </html>
